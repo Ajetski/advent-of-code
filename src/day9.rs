@@ -2,7 +2,6 @@
  * File: day09.rs
  * Author: Adam Jeniski; @Ajetski
  */
-
 use std::collections::{HashSet, LinkedList};
 type Position = (usize, usize);
 
@@ -31,7 +30,7 @@ fn get_local_mins(data: &Vec<Vec<u64>>) -> Vec<Position> {
     mins
 }
 
-/** use a BFS to count all of the nodes in the basin */ 
+/** use a BFS to count all of the nodes in the basin */
 fn get_basin_size_from_min(data: &Vec<Vec<u64>>, start: Position) -> u64 {
     /* queue: pop from front; push to back */
     let mut search_queue = LinkedList::from([start]);
@@ -42,14 +41,21 @@ fn get_basin_size_from_min(data: &Vec<Vec<u64>>, start: Position) -> u64 {
         let (row, col) = search_queue.pop_front().unwrap();
         let mut directions = vec![];
 
-        if row > 0 { directions.push((row - 1, col)); }
-        if col > 0 { directions.push((row, col - 1)); }
-        if row < data.len() - 1 { directions.push((row + 1, col)); }
-        if col < data[row].len() - 1 { directions.push((row, col + 1)); }
+        if row > 0 {
+            directions.push((row - 1, col));
+        }
+        if col > 0 {
+            directions.push((row, col - 1));
+        }
+        if row < data.len() - 1 {
+            directions.push((row + 1, col));
+        }
+        if col < data[row].len() - 1 {
+            directions.push((row, col + 1));
+        }
 
         for (next_row, next_col) in directions {
-            if data[next_row][next_col] != 9
-                && !visited.contains(&(next_row, next_col)) {
+            if data[next_row][next_col] != 9 && !visited.contains(&(next_row, next_col)) {
                 search_queue.push_back((next_row, next_col));
                 count += 1;
             }
