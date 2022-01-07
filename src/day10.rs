@@ -1,5 +1,10 @@
 #![allow(dead_code)]
 
+/**
+ * File: day10.rs
+ * Author: Adam Jeniski; @Ajetski
+ */
+
 use std::collections::{HashMap};
 
 type Stack = Vec<char>;
