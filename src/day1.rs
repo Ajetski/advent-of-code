@@ -1,7 +1,21 @@
-fn part_1_solution(input: &str) -> u64 {
-    
+#![allow(dead_code)]
 
-    todo!();
+fn parse_input(input: &str) -> Vec<u32> {
+    input.split_ascii_whitespace().map(|x| x.parse().unwrap() ).collect()
+}
+
+fn part_1_solution(input: &str) -> u64 {
+    parse_input(input)
+        .as_slice()
+        .windows(2)
+        .fold(0, |acc, w| if w[0] < w[1] { acc + 1 } else { acc })
+}
+
+fn part_2_solution(input: &str) -> u64 {
+    parse_input(input)
+        .as_slice()
+        .windows(4)
+        .fold(0, |acc, w| if w[0] < w[3] { acc + 1 } else { acc })
 }
 
 #[cfg(test)]
