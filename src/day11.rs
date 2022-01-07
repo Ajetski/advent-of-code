@@ -47,8 +47,6 @@ fn part_1_solution(input: &str) -> u64 {
     let mut count = 0;
 
     for _ in 0..100 {
-        print!("");
-
         // increase energy
         for row in 0..data.len() {
             for col in 0..data[row].len() {
