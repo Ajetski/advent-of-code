@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 /**
  * File: lib.rs
  * Author: Adam Jeniski; @Ajetski

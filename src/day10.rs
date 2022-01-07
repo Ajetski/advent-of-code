@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 /**
  * File: day10.rs
  * Author: Adam Jeniski; @Ajetski
