@@ -42,10 +42,10 @@ fn get_basin_size_from_min(data: &Vec<Vec<u64>>, start: Position) -> u64 {
         let (row, col) = search_queue.pop_front().unwrap();
         let mut directions = vec![];
 
-        if row > 0 { directions.push((row - 1, col)) }
-        if col > 0 { directions.push((row, col - 1)) }
-        if row < data.len() - 1 { directions.push((row + 1, col)) }
-        if col < data[row].len() - 1 { directions.push((row, col + 1)) }
+        if row > 0 { directions.push((row - 1, col)); }
+        if col > 0 { directions.push((row, col - 1)); }
+        if row < data.len() - 1 { directions.push((row + 1, col)); }
+        if col < data[row].len() - 1 { directions.push((row, col + 1)); }
 
         for (next_row, next_col) in directions {
             if data[next_row][next_col] != 9
