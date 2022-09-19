@@ -2,26 +2,15 @@
  * File: day10.rs
  * Author: Adam Jeniski; @Ajetski
  */
-
-use std::collections::{HashMap};
+use std::collections::HashMap;
 
 type Stack = Vec<char>;
 
 fn part_1_solution(input: &str) -> u64 {
-    let point_table = HashMap::<char, u64>::from([
-        (')', 3),
-        (']', 57),
-        ('}', 1197),
-        ('>', 25137)
-    ]);
+    let point_table = HashMap::<char, u64>::from([(')', 3), (']', 57), ('}', 1197), ('>', 25137)]);
 
-    let match_table = HashMap::<char, char>::from([
-        (')', '('),
-        (']', '['),
-        ('}', '{'),
-        ('>', '<')
-    ]);
-    
+    let match_table = HashMap::<char, char>::from([(')', '('), (']', '['), ('}', '{'), ('>', '<')]);
+
     let mut count = 0;
 
     for line in input.split_ascii_whitespace() {
@@ -43,31 +32,17 @@ fn part_1_solution(input: &str) -> u64 {
 }
 
 fn part_2_solution(input: &str) -> u64 {
-    let point_table = HashMap::<char, u64>::from([
-        (')', 1),
-        (']', 2),
-        ('}', 3),
-        ('>', 4)
-    ]);
+    let point_table = HashMap::<char, u64>::from([(')', 1), (']', 2), ('}', 3), ('>', 4)]);
 
-    let match_table_from_start = HashMap::<char, char>::from([
-        ('(', ')'),
-        ('[', ']'),
-        ('{', '}'),
-        ('<', '>')
-    ]);
+    let match_table_from_start =
+        HashMap::<char, char>::from([('(', ')'), ('[', ']'), ('{', '}'), ('<', '>')]);
 
-    let match_table_from_end = HashMap::<char, char>::from([
-        (')', '('),
-        (']', '['),
-        ('}', '{'),
-        ('>', '<')
-    ]);
-    
-    
+    let match_table_from_end =
+        HashMap::<char, char>::from([(')', '('), (']', '['), ('}', '{'), ('>', '<')]);
+
     let mut counts = vec![];
 
-    'outer:for line in input.split_ascii_whitespace() {
+    'outer: for line in input.split_ascii_whitespace() {
         let mut stack = Stack::new();
         for c in line.chars() {
             if "([{<".contains(c) {
@@ -84,7 +59,9 @@ fn part_2_solution(input: &str) -> u64 {
         while !stack.is_empty() {
             let c = stack.pop().unwrap();
             count *= 5;
-            count += point_table.get(match_table_from_start.get(&c).unwrap()).unwrap();
+            count += point_table
+                .get(match_table_from_start.get(&c).unwrap())
+                .unwrap();
         }
         counts.push(count);
     }

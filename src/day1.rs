@@ -1,7 +1,10 @@
 #![allow(dead_code)]
 
 fn parse_input(input: &str) -> Vec<u32> {
-    input.split_ascii_whitespace().map(|x| x.parse().unwrap() ).collect()
+    input
+        .split_ascii_whitespace()
+        .map(|x| x.parse().unwrap())
+        .collect()
 }
 
 fn part_1_solution(input: &str) -> u64 {
