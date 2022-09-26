@@ -83,13 +83,10 @@ fn configure_board(
                     || (y != 0 && tile.fits_with_right_border_of(board[x][y - 1].as_ref().unwrap()))
                 {
                     board[x][y] = Some(tile.clone());
-                    // println!("found match for {x}, {y}, {tile}");
 
                     if let Some(ans) = configure_board(board, tiles_left, new_x, new_y, n) {
                         return Some(ans);
                     }
-                } else {
-                    // println!("no match found for {x}, {y}, {tile}");
                 }
                 tile.flip();
             }
@@ -104,8 +101,7 @@ fn part_one(mut input: HashSet<Tile>) -> u128 {
     let n2 = input.len();
     let n = (n2 as f64).sqrt() as usize;
     let mut board = vec![vec![None; n]; n];
-    let value = configure_board(&mut board, &mut input, 0, 0, n);
-    let board = value.unwrap();
+    let board = configure_board(&mut board, &mut input, 0, 0, n).unwrap();
     board[0][0].id * board[0][n - 1].id * board[n - 1][0].id * board[n - 1][n - 1].id
 }
 
@@ -114,22 +110,19 @@ fn part_two(mut input: HashSet<Tile>) -> u128 {
     let n = (n2 as f64).sqrt() as usize;
     let mut board = vec![vec![None; n]; n];
     let board = configure_board(&mut board, &mut input, 0, 0, n).unwrap();
+
+    let mut pic = vec![vec![]; n];
     let tile_size = board[0][0].grid.len();
-    let _picture = {
-        let mut pic = vec![vec![]; n];
-        for (x, board_row) in board.iter().enumerate() {
-            for tile in board_row {
-                for (i, tile_row) in tile.grid.iter().enumerate() {
-                    for c in tile_row {
-                        pic[x * (tile_size - 2) + i].push(*c);
-                    }
+    for (x, board_row) in board.iter().enumerate() {
+        for tile in board_row {
+            for (i, tile_row) in tile.grid.iter().enumerate() {
+                for c in tile_row {
+                    pic[x * (tile_size - 2) + i].push(*c);
                 }
             }
         }
-        pic
-    };
+    }
 
-    // turn board into picture
     // flip/rotate pitctures
     // traverse each image for sea monsters
 
@@ -159,25 +152,16 @@ mod tests {
     }
 
     fn parse_inputs(input: &str) -> HashSet<Tile> {
-        let mut tiles = HashSet::new();
-        let chunks: Vec<&str> = input.split("\n\n").collect();
-        for chunk in &chunks[0..chunks.len() - 1] {
-            let mut line_it = chunk.split('\n');
-            let tile_id_line = line_it.next().unwrap();
-            let id = tile_id_line[5..tile_id_line.chars().count() - 1]
-                .parse()
-                .unwrap();
-            let mut grid = vec![];
-            for line in line_it {
-                grid.push(line.chars().collect());
-            }
-            tiles.insert(Tile { id, grid });
-        }
-        tiles
+        input
+            .trim()
+            .split("\n\n")
+            .map(str::parse)
+            .map(Result::unwrap)
+            .collect()
     }
 }
 
-// utility traits for data structures and debugging
+// utility traits for parsing, hashing, equality, and printing tiles
 impl PartialEq for Tile {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
@@ -186,6 +170,22 @@ impl PartialEq for Tile {
 impl std::hash::Hash for Tile {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.id.hash(state);
+    }
+}
+impl std::str::FromStr for Tile {
+    type Err = std::string::ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (id_line, grid_lines) = s.split_once('\n').unwrap();
+        Ok(Tile {
+            id: id_line[5..id_line.chars().count() - 1].parse().unwrap(),
+            grid: grid_lines
+                .trim()
+                .split('\n')
+                .map(str::chars)
+                .map(Iterator::collect)
+                .collect(),
+        })
     }
 }
 impl Display for Tile {
