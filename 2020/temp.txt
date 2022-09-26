@@ -1,0 +1,35 @@
+
+running 2 tests
+test day20::tests::day20_part_one_sample ... ok
+test day20::tests::day20_part_one ... FAILED
+
+failures:
+
+---- day20::tests::day20_part_one stdout ----
+n is 12, n squared is 144
+num: 250
+num: 500
+num: 750
+num: 1000
+num: 1250
+num: 1500
+num: 1750
+num: 2000
+num: 2250
+num: 2500
+num: 2750
+num: 3000
+num: 3250
+num: 3500
+num iterations: 3721
+thread 'day20::tests::day20_part_one' panicked at 'assertion failed: `(left == right)`
+  left: `66020135789767`,
+ right: `20899048083289`', src/day20.rs:149:9
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    day20::tests::day20_part_one
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.51s
+

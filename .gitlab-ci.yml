@@ -25,5 +25,9 @@ image: "rust:latest"
 # Use cargo to test the project
 test:cargo:
   script:
+    - cd 2021
     - rustc --version && cargo --version  # Print version info for debugging
-    - cargo test --workspace --verbose
+    - cargo test --workspace --verbose -j 8
+    - cd ../2020
+    - rustc --version && cargo --version  # Print version info for debugging
+    - cargo test --workspace --verbose -j 8
