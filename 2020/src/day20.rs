@@ -173,12 +173,12 @@ impl std::hash::Hash for Tile {
     }
 }
 impl std::str::FromStr for Tile {
-    type Err = std::string::ParseError;
+    type Err = std::num::ParseIntError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (id_line, grid_lines) = s.split_once('\n').unwrap();
         Ok(Tile {
-            id: id_line[5..id_line.chars().count() - 1].parse().unwrap(),
+            id: id_line[5..id_line.chars().count() - 1].parse()?,
             grid: grid_lines
                 .trim()
                 .split('\n')
