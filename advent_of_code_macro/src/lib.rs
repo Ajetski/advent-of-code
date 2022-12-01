@@ -1,6 +1,12 @@
 #[macro_export]
 macro_rules! solve_problem {
-    (day $day:literal, Input $input_type:ty, parse $parse_input:expr, part one $part_one:expr, part two $part_two:expr, sample tests [$part_one_sample_ans:literal, $part_two_sample_ans:literal], star tests [$part_one_ans:literal, $part_two_ans:literal]) => {
+    (day $day:literal,
+     Input $input_type:ty,
+     parse $parse_input:expr,
+     part one $part_one:expr,
+     part two $part_two:expr,
+     sample tests [$part_one_sample_ans:literal, $part_two_sample_ans:literal],
+     star tests [$part_one_ans:literal, $part_two_ans:literal]) => {
         #[cfg(test)]
         paste::paste! {
             mod [<day_ $day _tests>] {
