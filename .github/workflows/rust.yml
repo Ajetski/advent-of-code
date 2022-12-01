@@ -31,3 +31,14 @@ jobs:
       run: cd 2021 && cargo build --verbose
     - name: Run tests
       run: cd 2021 && cargo test --verbose
+
+  tests_2022:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cd 2022 && cargo build --verbose
+    - name: Run tests
+      run: cd 2022 && cargo test --verbose
