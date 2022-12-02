@@ -10,6 +10,7 @@ macro_rules! solve_problem {
         #[cfg(test)]
         paste::paste! {
             mod [<day_ $day _tests>] {
+                use super::*;
                 type Input = $input_type;
                 fn parse_input(s: &str) -> Input {
                     $parse_input(s)

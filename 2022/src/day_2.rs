@@ -55,11 +55,9 @@ advent_of_code_macro::solve_problem!(
         input.lines().map(|line| line.split(' ').map(|s| s.chars().next().unwrap()).collect()).collect()
     },
     part one |data: Input| {
-        use super::Shape;
         data.iter().map(|round| Shape::from_char(round[1]).result(&Shape::from_char(round[0]))).sum()
     },
     part two |data: Input| {
-        use super::Shape;
         data.iter().map(|round| match round[1] {
             'X' =>  Shape::from_char(round[0]).wins_to().as_int(),
             'Y' =>  Shape::from_char(round[0]).as_int() + 3,
