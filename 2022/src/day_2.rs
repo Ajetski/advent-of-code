@@ -1,6 +1,6 @@
 use Shape::*;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 enum Shape {
     Rock,
     Paper,
@@ -21,16 +21,6 @@ impl Shape {
             Paper => 2,
             Scissors => 3,
         }
-    }
-    fn result(&self, other: &Self) -> i32 {
-        self.as_int()
-            + if self.as_int() == other.as_int() {
-                3
-            } else if std::cmp::max((self.as_int() + 1) % 4, 1) == other.as_int() {
-                0
-            } else {
-                6
-            }
     }
     fn loses_to(&self) -> Self {
         match self {
@@ -55,7 +45,18 @@ advent_of_code_macro::solve_problem!(
         input.lines().map(|line| line.split(' ').map(|s| s.chars().next().unwrap()).collect()).collect()
     },
     part one |data: Input| {
-        data.iter().map(|round| Shape::from_char(round[1]).result(&Shape::from_char(round[0]))).sum()
+        data.iter().map(|round| {
+            let my_move = Shape::from_char(round[1]);
+            let other_move = Shape::from_char(round[0]);
+            let round_result = if my_move == other_move {
+                3
+            } else if my_move.loses_to() == other_move {
+                0
+            } else {
+                6
+            };
+            round_result + my_move.as_int()
+        }).sum()
     },
     part two |data: Input| {
         data.iter().map(|round| match round[1] {
