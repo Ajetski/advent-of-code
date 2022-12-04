@@ -1,6 +1,6 @@
 [package]
 name = "advent_of_code_macro"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "An test generating macro for advent of code"
 license = "MIT"
