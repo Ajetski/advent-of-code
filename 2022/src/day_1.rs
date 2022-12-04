@@ -1,17 +1,17 @@
-type Input = Vec<Vec<i32>>;
+type Data = Vec<Vec<i32>>;
 
-fn parse(input: &str) -> Input {
+fn parse(input: &str) -> Data {
     input
         .split("\n\n")
         .map(|lines| lines.lines().map(|line| line.parse().unwrap()).collect())
         .collect()
 }
 
-fn part_one(data: Input) -> i32 {
+fn part_one(data: Data) -> i32 {
     data.iter().map(|cals| cals.iter().sum()).max().unwrap()
 }
 
-fn part_two(data: Input) -> i32 {
+fn part_two(data: Data) -> i32 {
     let mut cals: std::collections::BinaryHeap<i32> =
         data.iter().map(|cals| cals.iter().sum()).collect();
     cals.pop().unwrap() + cals.pop().unwrap() + cals.pop().unwrap()

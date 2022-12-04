@@ -1,7 +1,5 @@
 use Shape::*;
 
-type Input = Vec<Vec<char>>;
-
 #[derive(Debug, PartialEq, Eq)]
 enum Shape {
     Rock,
@@ -39,13 +37,16 @@ impl Shape {
         }
     }
 }
-fn parse(input: &str) -> Input {
+
+type Data = Vec<Vec<char>>;
+
+fn parse(input: &str) -> Data {
     input
         .lines()
         .map(|line| line.split(' ').map(|s| s.chars().next().unwrap()).collect())
         .collect()
 }
-fn part_one(data: Input) -> i32 {
+fn part_one(data: Data) -> i32 {
     data.iter()
         .map(|round| {
             let my_move = Shape::from_char(round[1]);
@@ -61,7 +62,7 @@ fn part_one(data: Input) -> i32 {
         })
         .sum()
 }
-fn part_two(data: Input) -> i32 {
+fn part_two(data: Data) -> i32 {
     data.iter()
         .map(|round| match round[1] {
             'X' => Shape::from_char(round[0]).wins_to().as_int(),

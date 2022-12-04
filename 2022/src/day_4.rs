@@ -1,6 +1,6 @@
-type Input = Vec<Vec<i32>>;
+type Data = Vec<Vec<i32>>;
 
-fn parse(input: &str) -> Input {
+fn parse(input: &str) -> Data {
     input
         .lines()
         .map(|line| {
@@ -15,7 +15,7 @@ fn parse(input: &str) -> Input {
         })
         .collect()
 }
-fn part_one(data: Input) -> i32 {
+fn part_one(data: Data) -> i32 {
     data.into_iter().fold(0, |acc, curr| {
         if (curr[0] <= curr[2] && curr[1] >= curr[3]) || (curr[2] <= curr[0] && curr[3] >= curr[1])
         {
@@ -25,7 +25,7 @@ fn part_one(data: Input) -> i32 {
         }
     })
 }
-fn part_two(data: Input) -> i32 {
+fn part_two(data: Data) -> i32 {
     data.into_iter().fold(0, |acc, curr| {
         if (curr[0] >= curr[2] && curr[0] <= curr[3])
             || (curr[1] >= curr[2] && curr[1] <= curr[3])

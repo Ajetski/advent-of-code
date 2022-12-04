@@ -1,4 +1,4 @@
-type Input = Vec<String>;
+type Data = Vec<String>;
 
 fn get_priority(c: char) -> i32 {
     match c {
@@ -7,10 +7,10 @@ fn get_priority(c: char) -> i32 {
         _ => panic!("expected letter"),
     }
 }
-fn parse(input: &str) -> Input {
+fn parse(input: &str) -> Data {
     input.lines().map(str::to_owned).collect()
 }
-fn part_one(data: Input) -> i32 {
+fn part_one(data: Data) -> i32 {
     data.iter()
         .map(|s| {
             use std::collections::HashSet;
@@ -20,7 +20,7 @@ fn part_one(data: Input) -> i32 {
         })
         .sum()
 }
-fn part_two(data: Input) -> i32 {
+fn part_two(data: Data) -> i32 {
     data.as_slice()
         .chunks(3)
         .map(|c| {
