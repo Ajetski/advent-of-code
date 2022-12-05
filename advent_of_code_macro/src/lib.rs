@@ -4,8 +4,8 @@ macro_rules! generate_tests {
      $parse_input:ident,
      $part_one:ident,
      $part_two:ident,
-     sample tests [$part_one_sample_ans:literal, $part_two_sample_ans:literal],
-     star tests [$part_one_ans:literal, $part_two_ans:literal]) => {
+     sample tests [$part_one_sample_ans:expr, $part_two_sample_ans:expr],
+     star tests [$part_one_ans:expr, $part_two_ans:expr]) => {
         #[cfg(test)]
         paste::paste! {
             mod [<day_ $day _tests>] {
