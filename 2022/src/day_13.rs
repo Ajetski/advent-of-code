@@ -100,5 +100,5 @@ advent_of_code_macro::generate_tests!(
     part_one,
     part_two,
     sample tests [13, 140],
-    star tests [4734, 0]
+    star tests [4_734, 21_836]
 );
