@@ -1,13 +1,16 @@
 use std::collections::{BinaryHeap, HashSet};
 
+type Coords = (usize, usize);
+
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 struct Location {
-    coords: (usize, usize),
+    coords: Coords,
     steps: i32,
+    cost: i32,
 }
 impl std::cmp::Ord for Location {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.steps.cmp(&self.steps)
+        other.cost.cmp(&self.cost)
     }
 }
 impl PartialOrd for Location {
@@ -22,17 +25,18 @@ fn parse(input: &str) -> Data {
     input.lines().map(|l| l.chars().collect()).collect()
 }
 
-fn distance(start: (usize, usize), end: (usize, usize)) -> usize {
+fn distance(start: Coords, end: Coords) -> usize {
     start.0.abs_diff(end.0) + start.1.abs_diff(end.1)
 }
 
-fn find_shortest_path(data: &Data, start: (usize, usize)) -> Output {
+fn find_shortest_path(data: &Data, start: Coords, end: Coords) -> Output {
     let bounds = (data.len() as i32, data[0].len() as i32);
 
-    let mut visited: HashSet<(usize, usize)> = Default::default();
+    let mut visited: HashSet<Coords> = Default::default();
     let mut queue: BinaryHeap<Location> = BinaryHeap::from([Location {
         coords: start,
         steps: 0,
+        cost: distance(start, end) as i32,
     }]);
 
     'outer: while let Some(loc) = queue.pop() {
@@ -43,7 +47,6 @@ fn find_shortest_path(data: &Data, start: (usize, usize)) -> Output {
         let (x, y) = loc.coords;
         let (x, y) = (x as i32, y as i32);
         let c = data[x as usize][y as usize];
-        println!("{:?} {}", &loc, c);
         if c == 'E' {
             return loc.steps as Output;
         }
@@ -62,7 +65,11 @@ fn find_shortest_path(data: &Data, start: (usize, usize)) -> Output {
                 || c as i32 + 1 == c2 as i32
             {
                 let steps = loc.steps + 1;
-                queue.push(Location { coords, steps });
+                queue.push(Location {
+                    coords,
+                    steps,
+                    cost: distance(start, end) as i32 + steps,
+                });
             }
         }
     }
@@ -71,34 +78,42 @@ fn find_shortest_path(data: &Data, start: (usize, usize)) -> Output {
 }
 
 fn part_one(data: Data) -> Output {
-    let start = {
+    let (start, end) = {
         let mut start = None;
+        let mut end = None;
         for (i, row) in data.iter().enumerate() {
             for (j, c) in row.iter().enumerate() {
                 if c == &'S' {
                     start = Some((i, j));
                 }
+                if c == &'E' {
+                    end = Some((i, j));
+                }
             }
         }
-        start.unwrap()
+        (start.unwrap(), end.unwrap())
     };
-    find_shortest_path(&data, start)
+    find_shortest_path(&data, start, end)
 }
 fn part_two(data: Data) -> Output {
-    let starting_points = {
+    let (starting_points, end) = {
         let mut starting_points = vec![];
+        let mut end = None;
         for (i, row) in data.iter().enumerate() {
             for (j, c) in row.iter().enumerate() {
                 if c == &'S' || c == &'a' {
                     starting_points.push((i, j));
                 }
+                if c == &'E' {
+                    end = Some((i, j));
+                }
             }
         }
-        starting_points
+        (starting_points, end.unwrap())
     };
     starting_points
         .iter()
-        .map(|start| find_shortest_path(&data, *start))
+        .map(|start| find_shortest_path(&data, *start, end))
         .min()
         .unwrap()
 }
