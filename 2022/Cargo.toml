@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 advent_of_code_macro = { path = "../advent_of_code_macro" }
+json = "0.12.4"
 paste = "1.0.9"
