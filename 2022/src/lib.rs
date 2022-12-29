@@ -14,3 +14,7 @@ mod day_12;
 mod day_13;
 mod day_14;
 mod day_15;
+mod day_16;
+mod day_17;
+mod day_18;
+mod day_19;
