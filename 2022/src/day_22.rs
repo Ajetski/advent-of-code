@@ -1,6 +1,7 @@
 use Direction::*;
 use Instruction::*;
 
+#[derive(Debug)]
 struct State {
     row: i32,
     col: i32,
@@ -9,10 +10,62 @@ struct State {
 impl State {
     fn do_instr(
         &mut self,
-        _row_bounds: &Vec<CondensedFileOrRank>,
-        _col_bounds: &Vec<CondensedFileOrRank>,
+        row_bounds: &Vec<CondensedFileOrRank>,
+        col_bounds: &Vec<CondensedFileOrRank>,
         instr: Instruction,
     ) {
+        fn go(
+            loc: &mut i32,
+            bound_idx: i32,
+            bounds: &Vec<CondensedFileOrRank>,
+            dist: i32,
+            walk_positive: bool,
+        ) {
+            let CondensedFileOrRank {
+                ref walls,
+                start_idx,
+                end_idx,
+            } = bounds[bound_idx as usize];
+            if walk_positive {
+                *loc = match walls.iter().skip_while(|wall| **wall <= *loc).next() {
+                    Some(x) => std::cmp::min(*loc + dist, *x - 1),
+                    None => {
+                        if walls.is_empty() {
+                            let len = end_idx - start_idx + 1;
+                            start_idx + ((*loc - start_idx + dist).rem_euclid(len))
+                        } else {
+                            if *walls.first().unwrap() != start_idx && *loc + dist > end_idx {
+                                std::cmp::min(
+                                    walls.first().unwrap() - 1,
+                                    start_idx + (*loc + dist - end_idx - 1),
+                                )
+                            } else {
+                                std::cmp::min(*loc + dist, end_idx)
+                            }
+                        }
+                    }
+                };
+            } else {
+                *loc = match walls.iter().rev().skip_while(|wall| **wall >= *loc).next() {
+                    Some(x) => std::cmp::max(*loc - dist, *x + 1),
+                    None => {
+                        if walls.is_empty() {
+                            let len = end_idx - start_idx + 1;
+                            start_idx + (*loc - start_idx - dist).rem_euclid(len)
+                        } else {
+                            if *walls.last().unwrap() != end_idx && *loc - dist < start_idx {
+                                std::cmp::max(
+                                    *walls.last().unwrap() + 1,
+                                    end_idx - (dist - (*loc - start_idx + 1)),
+                                )
+                            } else {
+                                std::cmp::max(*loc - dist, start_idx)
+                            }
+                        }
+                    }
+                };
+            }
+        }
         match instr {
             Clockwise => {
                 self.dir = match self.dir {
@@ -30,18 +83,18 @@ impl State {
                     Down => Right,
                 }
             }
-            Go(_n) => match self.dir {
+            Go(n) => match self.dir {
                 Left => {
-                    todo!()
+                    go(&mut self.col, self.row, &row_bounds, n, false);
                 }
                 Right => {
-                    todo!()
+                    go(&mut self.col, self.row, &row_bounds, n, true);
                 }
                 Up => {
-                    todo!()
+                    go(&mut self.row, self.col, &col_bounds, n, false);
                 }
                 Down => {
-                    todo!()
+                    go(&mut self.row, self.col, &col_bounds, n, true);
                 }
             },
         }
@@ -164,7 +217,7 @@ fn part_one((row_bounds, col_bounds, instructions): Data) -> Output {
     for instr in instructions {
         state.do_instr(&row_bounds, &col_bounds, instr);
     }
-    state.row * 1000 + state.col + 4 + state.dir as i32
+    (state.row + 1) * 1000 + (state.col + 1) * 4 + state.dir as i32
 }
 fn part_two(data: Data) -> Output {
     todo!()
@@ -176,5 +229,5 @@ advent_of_code_macro::generate_tests!(
     part_one,
     part_two,
     sample tests [6_032, 0],
-    star tests [0, 0]
+    star tests [149_138, 0]
 );
