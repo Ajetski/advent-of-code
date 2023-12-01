@@ -1,4 +1,4 @@
-(ns ^{:doc "Day 1"
+(ns ^{:doc "Day 1: Trebuchet?!"
       :author "Adam Jeniski"}
  day01 (:require [core :refer [get-puzzle-input]]
                  [clojure.string :as string]))
