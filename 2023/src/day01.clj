@@ -30,15 +30,15 @@
        (#(conj % "\\d"))
        (string/join "|")
        re-pattern))
-(def forwards-search-pattern (generate-regex-pattern identity))
-(def backwards-search-pattern (generate-regex-pattern string/reverse))
+(def first-num-pattern (generate-regex-pattern identity))
+(def last-num-pattern (generate-regex-pattern string/reverse))
 
 ;; part 2
 (->> input
      (map #(Integer/parseInt
-            (str (numeric-value (re-find forwards-search-pattern %))
+            (str (numeric-value (re-find first-num-pattern %))
                  (numeric-value (string/reverse
-                                 (re-find backwards-search-pattern
+                                 (re-find last-num-pattern
                                           (string/reverse %)))))))
      (reduce +))
 
