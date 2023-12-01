@@ -33,8 +33,8 @@
                                re-pattern))
 
 (def backwards-search-regex (->> (conj (->> numeric-value-map keys (map string/reverse)) "\\d")
-                                                  (string/join "|")
-                                                  re-pattern))
+                                 (string/join "|")
+                                 re-pattern))
 
 (->> input
      (map (fn [line]
