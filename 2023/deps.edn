@@ -1,0 +1,11 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.clojure/core.match {:mvn/version "1.0.1"}
+        clj-http/clj-http {:mvn/version "3.12.3"}}
+ :aliases
+ {:repl
+  {:extra-deps {nrepl/nrepl       {:mvn/version "0.9.0"}
+                cider/cider-nrepl {:mvn/version "0.28.4"}}
+   :main-opts  ["-m" "nrepl.cmdline"
+                "--middleware" "[cider.nrepl/cider-middleware]"
+                "--interactive"]}}}
