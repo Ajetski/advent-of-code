@@ -3,10 +3,10 @@
  day01 (:require [core :refer [get-puzzle-input]]
                  [clojure.string :as string]))
 
-(def input (get-puzzle-input 1))
+(def lines (get-puzzle-input 1))
 
 ;; part 1
-(->> input
+(->> lines
      (map #(Integer/parseInt
             (str (re-find #"\d" %)
                  (re-find #"\d" (string/reverse %)))))
@@ -29,7 +29,7 @@
 (def last-num-pattern (generate-regex-pattern string/reverse))
 
 ;; part 2
-(->> input
+(->> lines
      (map #(Integer/parseInt
             (str (numeric-value (re-find first-num-pattern %))
                  (numeric-value (string/reverse
