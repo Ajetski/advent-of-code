@@ -19,24 +19,28 @@
 
 ;; part 1
 (->> lines
-     (filter (fn [[_id states]]
-               (not (some
-                     #(some (fn [[cnt color]]
-                              (< (cube-counts color) cnt)) %)
-                     states))))
+     (filter
+      (fn [[_id games]]
+        (not (some (fn [game]
+                     (some (fn [[cnt color]]
+                             (< (cube-counts color) cnt))
+                           game))
+                   games))))
      (map (fn [[id]] (Integer/parseInt id)))
      (reduce +))
 
 ;; part 2
 (->> lines
-     (map (fn [[_id states]]
-            (reduce #(reduce (fn [acc [cnt color]]
-                               (update acc color max cnt))
-                             %1
-                             %2)
+     (map (fn [[_id games]]
+            (reduce (fn [acc game]
+                      (reduce (fn [inner-acc [cnt color]]
+                                (update inner-acc color max cnt))
+                              acc
+                              game))
                     {"green" 0, "red" 0, "blue" 0}
-                    states)))
+                    games)))
      (map #(* (% "green")
               (% "red")
               (% "blue")))
      (reduce +))
+
