@@ -64,7 +64,7 @@
   (->> data
        (group-by first)
        (filter #(cogs (first %)))
-       (map #(update % 1 (partial mapv second)))
+       (map #(update % 1 (partial map second)))
        (map second)
        (map (partial map #(Integer/parseInt %)))
        (map (partial reduce *))
