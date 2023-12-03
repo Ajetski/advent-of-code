@@ -40,7 +40,7 @@
                                (map #(vector row (:start %) (:group %))
                                     matches)))
                 (mapcat identity)
-                (map (fn touching-star [[row-idx col-idx s]]
+                (map (fn touching-stars [[row-idx col-idx s]]
                        (let [length (count s)]
                          (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
                                     c (range (dec col-idx) (+ col-idx length 1))]
@@ -51,7 +51,7 @@
                 (filter seq)
                 (mapcat identity)
                 (map #(vector (ffirst %) (second %))))
-      cogs (->> data
+      gear (->> data
                 (map first)
                 (frequencies)
                 (filter #(= (second %) 2))
@@ -59,7 +59,7 @@
                 (into #{}))]
   (->> data
        (group-by first)
-       (filter #(cogs (first %)))
+       (filter #(gear (first %)))
        (map #(update % 1 (partial map second)))
        (map second)
        (map (partial map #(Integer/parseInt %)))
