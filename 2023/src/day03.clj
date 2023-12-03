@@ -4,6 +4,8 @@
           [core :refer [get-puzzle-input re-seq-pos]]))
 
 (def lines (get-puzzle-input 3))
+
+;; a hash-map of [row-idx col-idx] to char
 (def char-map
   (->> lines
        (map-indexed (fn [row-idx line]
@@ -34,36 +36,37 @@
      (map #(Integer/parseInt (nth % 2)))
      (reduce +))
 
-;; part 2
 ;; stars is a list of [[star-row-idx star-col-idx] "num"]
 ;; stars is list of each * char found touching a number when iterating by nums
-(let [stars (->> (parse-nums lines)
-                 (map (fn touching-stars [[row-idx col-idx s]]
-                        (let [length (count s)]
-                          (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
-                                     c (range (dec col-idx) (+ col-idx length 1))]
-                                 [[r c] (char-map [r c])])
-                               (filter #(not (nil? (second %))))
-                               (filter #(= \* (second %)))
-                               (map #(vector % s))))))
-                 (filter seq)
-                 (mapcat identity)
-                 (map #(vector (ffirst %) (second %))))
+(def stars (->> (parse-nums lines)
+                (map (fn touching-stars [[row-idx col-idx s]]
+                       (let [length (count s)]
+                         (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
+                                    c (range (dec col-idx) (+ col-idx length 1))]
+                                [[r c] (char-map [r c])])
+                              (filter #(not (nil? (second %))))
+                              (filter #(= \* (second %)))
+                              (map #(vector % s))))))
+                (filter seq)
+                (mapcat identity)
+                (map #(vector (ffirst %) (second %)))))
 
-      ;; gears is a set of [star-row-idx star-col-idx]
-      ;; gears is a list of each * char that is touching exactly 2 nums
-      gears (->> stars
-                 (map first)
-                 (frequencies)
-                 (filter #(= (second %) 2))
-                 (map first)
-                 (into #{}))]
-  (->> stars
-       (group-by first)
-       (filter #(gears (first %)))
-       (map #(update % 1 (partial map second)))
-       (map second)
-       (map (partial map #(Integer/parseInt %)))
-       (map (partial reduce *))
-       (reduce +)))
+;; gears is a set of [star-row-idx star-col-idx]
+;; gears is a list of each * char that is touching exactly 2 nums
+(def gears (->> stars
+                (map first)
+                (frequencies)
+                (filter #(= (second %) 2))
+                (map first)
+                (into #{})))
+
+;; part 2
+(->> stars
+     (group-by first)
+     (filter #(gears (first %)))
+     (map #(second (update % 1 (partial map second))))
+     (map (partial map #(Integer/parseInt %)))
+     (map (partial reduce *))
+     (reduce +)
+     )
 
