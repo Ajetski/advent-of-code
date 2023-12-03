@@ -14,5 +14,12 @@
                  :body
                  string/split-lines))))
 
+(defn re-seq-pos [pattern string]
+  (let [m (re-matcher pattern string)]
+    ((fn step []
+       (when (. m find)
+         (cons {:start (. m start) :end (. m end) :group (. m group)}
+               (lazy-seq (step))))))))
+
 (comment
   input-cache)
