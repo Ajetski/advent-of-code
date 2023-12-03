@@ -31,8 +31,8 @@
 
 ;; part 1
 (->> (parse-nums lines)
-     (filter (fn touches-symbol? [[row col s]]
-               (->> (coords-to-check row col s)
+     (filter (fn touches-symbol? [[row col num-str]]
+               (->> (coords-to-check row col num-str)
                     (map char-map)
                     (filter (comp not nil?))
                     (some #(not (or (Character/isDigit %) (= % \.)))))))
@@ -42,15 +42,15 @@
 ;; stars is a list of [[star-row-idx star-col-idx] "num"]
 ;; stars is list of each * char found touching a number when iterating by nums
 (def stars (->> (parse-nums lines)
-                (map (fn touching-stars [[row col s]]
-                       (->> (coords-to-check row col s)
+                (map (fn touching-stars [[row col num-str]]
+                       (->> (coords-to-check row col num-str)
                             (map #(vector % (char-map %)))
                             (filter #(not (nil? (second %))))
                             (filter #(= \* (second %)))
-                            (map #(vector % s)))))
+                            (map #(vector % num-str)))))
                 (filter seq)
                 (mapcat identity)
-                (map (fn [[[coords] num]] [coords num]))))
+                (map (fn [[[coords] num-str]] [coords num-str]))))
 
 ;; gears is a set of [star-row-idx star-col-idx]
 ;; gears is a list of each * char that is touching exactly 2 nums
