@@ -12,7 +12,7 @@
                       (map-indexed (fn [col-idx char]
                                      [[row-idx col-idx] char])
                                    line)))
-       (mapcat identity)
+       (apply concat)
        (into {})))
 
 ;; produces a list of [row-idx col-idx "num"]
@@ -22,7 +22,7 @@
        (map-indexed (fn [row matches]
                       (map #(vector row (:start %) (:group %))
                            matches)))
-       (mapcat identity)))
+       (apply concat)))
 
 (defn coords-to-check [row col num-str]
   (for [r [(dec row) row (inc row)]
@@ -49,7 +49,7 @@
                             (filter #(= \* (second %)))
                             (map #(vector % num-str)))))
                 (filter seq)
-                (mapcat identity)
+                (apply concat)
                 (map (fn [[[coords] num-str]] [coords num-str]))))
 
 ;; gears is a set of [star-row-idx star-col-idx]
