@@ -24,32 +24,33 @@
                            matches)))
        (mapcat identity)))
 
+(defn coords-to-check [row col num-str]
+  (for [r [(dec row) row (inc row)]
+        c (range (dec col) (+ col (count num-str) 1))]
+    [r c]))
+
 ;; part 1
 (->> (parse-nums lines)
-     (filter (fn touches-symbol? [[row-idx col-idx s]]
-               (let [length (count s)]
-                 (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
-                            c (range (dec col-idx) (+ col-idx length 1))]
-                        (char-map [r c]))
-                      (filter (comp not nil?))
-                      (some #(not (or (Character/isDigit %) (= % \.))))))))
+     (filter (fn touches-symbol? [[row col s]]
+               (->> (coords-to-check row col s)
+                    (map char-map)
+                    (filter (comp not nil?))
+                    (some #(not (or (Character/isDigit %) (= % \.)))))))
      (map #(Integer/parseInt (nth % 2)))
      (reduce +))
 
 ;; stars is a list of [[star-row-idx star-col-idx] "num"]
 ;; stars is list of each * char found touching a number when iterating by nums
 (def stars (->> (parse-nums lines)
-                (map (fn touching-stars [[row-idx col-idx s]]
-                       (let [length (count s)]
-                         (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
-                                    c (range (dec col-idx) (+ col-idx length 1))]
-                                [[r c] (char-map [r c])])
-                              (filter #(not (nil? (second %))))
-                              (filter #(= \* (second %)))
-                              (map #(vector % s))))))
+                (map (fn touching-stars [[row col s]]
+                       (->> (coords-to-check row col s)
+                            (map #(vector % (char-map %)))
+                            (filter #(not (nil? (second %))))
+                            (filter #(= \* (second %)))
+                            (map #(vector % s)))))
                 (filter seq)
                 (mapcat identity)
-                (map #(vector (ffirst %) (second %)))))
+                (map (fn [[[coords] num]] [coords num]))))
 
 ;; gears is a set of [star-row-idx star-col-idx]
 ;; gears is a list of each * char that is touching exactly 2 nums
@@ -67,6 +68,5 @@
      (map #(second (update % 1 (partial map second))))
      (map (partial map #(Integer/parseInt %)))
      (map (partial reduce *))
-     (reduce +)
-     )
+     (reduce +))
 
