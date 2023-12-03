@@ -1,4 +1,4 @@
-  (ns ^{:doc "Day 3"
+  (ns ^{:doc "Day 3: Gear Ratios"
         :author "Adam Jeniski"}
    day03 (:require
           [core :refer [get-puzzle-input re-seq-pos]]))
