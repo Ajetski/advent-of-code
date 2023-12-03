@@ -16,14 +16,6 @@
        (mapcat identity)
        (into {})))
 
-(defn touches-symbol? [[row-idx col-idx s]]
-  (let [length (count s)]
-    (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
-               c (range (dec col-idx) (+ col-idx length 1))]
-           (char-map [r c]))
-         (filter (comp not nil?))
-         (some #(not (or (Character/isDigit %) (= % \.)))))))
-
 ;; part 1
 (->> lines
      (map parse-nums)
@@ -31,18 +23,15 @@
                     (map #(vector row (:start %) (:group %))
                          matches)))
      (mapcat identity)
-     (filter touches-symbol?)
+     (filter (fn touches-symbol? [[row-idx col-idx s]]
+               (let [length (count s)]
+                 (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
+                            c (range (dec col-idx) (+ col-idx length 1))]
+                        (char-map [r c]))
+                      (filter (comp not nil?))
+                      (some #(not (or (Character/isDigit %) (= % \.))))))))
      (map #(Integer/parseInt (nth % 2)))
      (reduce +))
-
-(defn touches-star? [[row-idx col-idx s]]
-  (let [length (count s)]
-    (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
-               c (range (dec col-idx) (+ col-idx length 1))]
-           [[r c] (char-map [r c])])
-         (filter #(not (nil? (second %))))
-         (filter #(= \* (second %)))
-         (map #(vector % s)))))
 
 ;; part 2
 (let [data (->> lines
@@ -51,7 +40,14 @@
                                (map #(vector row (:start %) (:group %))
                                     matches)))
                 (mapcat identity)
-                (map touches-star?)
+                (map (fn touching-star [[row-idx col-idx s]]
+                       (let [length (count s)]
+                         (->> (for [r [(dec row-idx) row-idx (inc row-idx)]
+                                    c (range (dec col-idx) (+ col-idx length 1))]
+                                [[r c] (char-map [r c])])
+                              (filter #(not (nil? (second %))))
+                              (filter #(= \* (second %)))
+                              (map #(vector % s))))))
                 (filter seq)
                 (mapcat identity)
                 (map #(vector (ffirst %) (second %))))
