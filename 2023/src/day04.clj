@@ -6,18 +6,15 @@
         [clojure.string :as string]
         [core :refer [get-puzzle-input]]))
 
-(def lines (get-puzzle-input 4))
-
-(defn parse-lines [lines]
-  (->> lines
-       (map #(rest (re-find #"^Card\s*\d+: ([\s\d]+) \| ([\s\d]+)" %)))
-       (map (partial map #(->> (string/split % #" ")
-                               (filter not-empty)
-                               (map (fn [x] (Integer/parseInt x)))
-                               (into #{}))))))
+(def data (->> (get-puzzle-input 4)
+               (map #(rest (re-find #"^Card\s*\d+: ([\s\d]+) \| ([\s\d]+)" %)))
+               (map (partial map #(->> (string/split % #" ")
+                                       (filter not-empty)
+                                       (map (fn [x] (Integer/parseInt x)))
+                                       (into #{}))))))
 
 ;; part 1
-(->> (parse-lines lines)
+(->> data
      (map (partial apply intersection))
      (map count)
      (map #(math/pow 2 (dec %)))
@@ -26,7 +23,7 @@
 
 ;; part 2
 (loop [acc 0
-       data (->> (parse-lines lines)
+       data (->> data
                  (map #(vector 1 (count (apply intersection %))))
                  (into []))]
   (if (not-empty data)
