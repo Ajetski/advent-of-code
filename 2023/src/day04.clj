@@ -1,10 +1,9 @@
 (ns ^{:doc "Day 4"
       :author "Adam Jeniski"}
- day04 (:require
-        [clojure.math :as math]
-        [clojure.set :refer [intersection]]
-        [clojure.string :as string]
-        [core :refer [get-puzzle-input]]))
+ day04 (:require [clojure.math :as math]
+                 [clojure.set :refer [intersection]]
+                 [clojure.string :as string]
+                 [core :refer [get-puzzle-input]]))
 
 (def data (->> (get-puzzle-input 4)
                (map #(rest (re-find #"^Card\s*\d+: ([\s\d]+) \| ([\s\d]+)" %)))
