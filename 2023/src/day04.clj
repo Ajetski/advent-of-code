@@ -8,17 +8,16 @@
 
 (def lines (get-puzzle-input 4))
 
-(defn parse-nums [nums]
-  (->> (string/split nums #" ")
-       (filter not-empty)
-       (map #(Integer/parseInt %))
-       (into #{})))
+(defn parse-lines [lines]
+  (->> lines
+       (map #(rest (re-find #"^Card\s*\d+: ([\s\d]+) \| ([\s\d]+)" %)))
+       (map (partial map #(->> (string/split % #" ")
+                               (filter not-empty)
+                               (map (fn [x] (Integer/parseInt x)))
+                               (into #{}))))))
 
 ;; part 1
-(->> lines
-     (map #(re-find #"^Card\s*\d+: ([\s\d]+) \| ([\s\d]+)" %))
-     (map rest)
-     (map (partial map parse-nums))
+(->> (parse-lines lines)
      (map (partial apply intersection))
      (map count)
      (map #(math/pow 2 (dec %)))
@@ -27,23 +26,15 @@
 
 ;; part 2
 (loop [acc 0
-       data (->> lines
-                 (map #(re-find #"^Card\s*\d+: ([\s\d]+) \| ([\s\d]+)" %))
-                 (map rest)
-                 (map (fn [[win actual]]
-                        [1 (count (intersection (parse-nums win)
-                                                (parse-nums actual)))]))
+       data (->> (parse-lines lines)
+                 (map #(vector 1 (count (apply intersection %))))
                  (into []))]
   (if (not-empty data)
-    (let [cnt-to-add (second (first data))
-          curr-cnt (ffirst data)]
-
-      (recur
-       (+ acc curr-cnt)
-       (concat (->> data
-                    rest
-                    (take cnt-to-add)
-                    (map #(update % 0 + curr-cnt)))
-               (drop (inc cnt-to-add) data))))
+    (let [[card-cnt num-matches] (first data)]
+      (recur (+ acc card-cnt)
+             (concat (->> (rest data)
+                          (take num-matches)
+                          (map #(update % 0 + card-cnt)))
+                     (drop (inc num-matches) data))))
     acc))
 
