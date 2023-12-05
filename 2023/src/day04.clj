@@ -1,4 +1,4 @@
-(ns ^{:doc "Day 4"
+(ns ^{:doc "Day 4: Scratchcards"
       :author "Adam Jeniski"}
  day04 (:require [clojure.math :as math]
                  [clojure.set :refer [intersection]]
