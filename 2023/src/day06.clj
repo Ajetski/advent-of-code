@@ -3,7 +3,7 @@
  day06 (:require [clojure.string :as string]
                  [core :refer [get-puzzle-input]]))
 
-(def input (->> (get-puzzle-input 6)))
+(def input (get-puzzle-input 6))
 
 (defn solve [num-str-lists]
   (->> (map (partial map #(Long/parseLong %)) num-str-lists)
@@ -15,13 +15,11 @@
        (reduce *)))
 
 ;; part 1
-(->> input
-     (map (partial re-seq #"\d+"))
+(->> (map (partial re-seq #"\d+") input)
      solve)
 
 ;; part 2
-(->> input
-     (map (partial re-seq #"[\s\d]+"))
+(->> (map (partial re-seq #"[\s\d]+") input)
      (map (partial map #(string/replace % " " "")))
      solve)
 
