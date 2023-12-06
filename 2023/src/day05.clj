@@ -45,14 +45,9 @@
 ;; part 2
 (->> seeds
      (partition 2)
-     (map #(range (+
-                   118 ;; hacky solution, delete this + 117
-                   (first %))
+     (map #(range (first %)
                   (+ (first %)
-                     (second %))
-                  1000 ;; hacky solution, delete this
-                  ))
+                     (second %))))
      (apply concat)
-     (map translate)
+     (pmap translate)
      (apply min))
-
