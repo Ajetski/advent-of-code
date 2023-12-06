@@ -5,7 +5,7 @@
 
 (def input (get-puzzle-input 6))
 
-(defn solve [num-str-lists] ; takes a list of list of nums-string representing time and distance
+(defn solve [num-str-lists] ; takes a list of list of number-strings representing time and distance
   (->> (map (partial map #(Long/parseLong %)) num-str-lists)
        (apply zipmap)
        (map (fn [[ms record]] (->> (range 1 ms)
