@@ -15,11 +15,9 @@
        (reduce *)))
 
 ;; part 1
-(->> (map (partial re-seq #"\d+") input)
-     solve)
+(solve (map (partial re-seq #"\d+") input))
 
 ;; part 2
-(->> (map (partial re-seq #"[\s\d]+") input)
-     (map (partial map #(string/replace % " " "")))
-     solve)
+(solve (->> (map (partial re-seq #"[\s\d]+") input)
+            (map (partial map #(string/replace % " " "")))))
 
