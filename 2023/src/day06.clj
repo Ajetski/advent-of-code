@@ -5,26 +5,23 @@
 
 (def input (->> (get-puzzle-input 6)))
 
-(defn ways-to-beat [[ms record]]
-  (->> (range 1 ms)
-       (pmap #(* % (- ms %)))
-       (filter #(> % record))
-       (count)))
+(defn solve [num-str-lists]
+  (->> (map (partial map #(Long/parseLong %)) num-str-lists)
+       (apply zipmap)
+       (map (fn [[ms record]] (->> (range 1 ms)
+                                   (map #(* % (- ms %)))
+                                   (filter #(> % record))
+                                   (count))))
+       (reduce *)))
 
 ;; part 1
 (->> input
      (map (partial re-seq #"\d+"))
-     (map (partial map #(Long/parseLong %)))
-     (apply zipmap)
-     (map ways-to-beat)
-     (reduce *))
+     solve)
 
 ;; part 2
 (->> input
      (map (partial re-seq #"[\s\d]+"))
      (map (partial map #(string/replace % " " "")))
-     (map (partial map #(Long/parseLong %)))
-     (apply zipmap)
-     (map ways-to-beat)
-     (reduce *))
+     solve)
 
