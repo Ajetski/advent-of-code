@@ -14,6 +14,7 @@
         lcm (fn lcm [a b] (/ (* a b) (gcd a b)))]
      (reduce lcm x)))
 
+;; part 1
 (let [[dir _ & lines] (get-puzzle-input 8)
       dir-idx (map #(condp = %
                       \L 0
@@ -29,6 +30,7 @@
              drest
              (inc n)))))
 
+;; part 2
 (let [[dir _ & lines] (get-puzzle-input 8)
       dir-idx (map #(condp = %
                       \L 0
