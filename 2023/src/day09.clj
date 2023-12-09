@@ -16,7 +16,8 @@
 (defn solve [reduction]
   (->> (get-puzzle-input 9)
        (map parse-line)
-       (mapv (comp reverse generate-pyramid))
+       (map generate-pyramid)
+       (map reverse)
        (map (partial reduce reduction 0))
        (reduce +)))
 
