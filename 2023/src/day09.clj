@@ -10,8 +10,7 @@
     (let [last-line (peek pyramid)]
       (if (every? zero? last-line)
         pyramid
-        (recur (conj pyramid
-                     (mapv - (rest last-line) last-line)))))))
+        (recur (conj pyramid (mapv - (rest last-line) last-line)))))))
 
 (defn solve [reduction]
   (->> (get-puzzle-input 9)
