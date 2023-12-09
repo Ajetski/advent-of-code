@@ -1,6 +1,5 @@
-(ns day09
-  (:require [core :refer [get-puzzle-input]]
-            [clojure.string :as str]))
+(ns day09 (:require [core :refer [get-puzzle-input]]
+                    [clojure.string :as str]))
 
 (defn parse-line [line]
   (->> (str/split line #" ")
