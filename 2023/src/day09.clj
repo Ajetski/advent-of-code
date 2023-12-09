@@ -12,9 +12,7 @@
         (recur (conj pyramid (mapv - (rest last-line) last-line)))))))
 
 (defn solve [reduction] (->> (get-puzzle-input 9)
-                             (map parse-line)
-                             (map generate-pyramid)
-                             (map reverse)
+                             (map (comp reverse generate-pyramid parse-line))
                              (map #(reduce reduction 0 %))
                              (reduce +)))
 
