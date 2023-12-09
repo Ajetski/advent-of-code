@@ -18,7 +18,7 @@
        (map parse-line)
        (map generate-pyramid)
        (map reverse)
-       (map (partial reduce reduction 0))
+       (map #(reduce reduction 0 %))
        (reduce +)))
 
 ;; part 1
