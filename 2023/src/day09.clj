@@ -14,19 +14,16 @@
         (recur (conj pyramid
                      (mapv - (rest last-line) last-line)))))))
 
-(defn get-missing-num [nums reduction]
-  (let [pyrimid (generate-pyramid nums)]
-    (loop [acc 0
-           line-idx (dec (count pyrimid))]
-      (if (< line-idx 0)
-        acc
-        (recur (reduction (get pyrimid line-idx) acc)
-               (dec line-idx))))))
-
 (defn solve [reduction]
   (->> (get-puzzle-input 9)
        (mapv parse-line)
-       (mapv #(get-missing-num % reduction))
+       (mapv #(let [pyrimid (generate-pyramid %)]
+                (loop [acc 0
+                       line-idx (dec (count pyrimid))]
+                  (if (< line-idx 0)
+                    acc
+                    (recur (reduction (get pyrimid line-idx) acc)
+                           (dec line-idx))))))
        (reduce +)))
 
 ;; part 1
