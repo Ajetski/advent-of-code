@@ -1,9 +1,8 @@
 (ns day09 (:require [core :refer [get-puzzle-input]]
                     [clojure.string :as str]))
 
-(defn parse-line [line]
-  (->> (str/split line #" ")
-       (mapv #(Long/parseLong %))))
+(defn parse-line [line] (->> (str/split line #" ")
+                             (mapv #(Long/parseLong %))))
 
 (defn generate-pyramid [nums]
   (loop [pyramid [nums]]
