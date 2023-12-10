@@ -104,22 +104,17 @@
                   (map #(update % 1 (partial map second)))
                   (map #(update % 1 sort))
                   (into {}))
-      by-col (->> path
-                  (group-by second)
-                  (map #(update % 1 (partial map first)))
-                  (map #(update % 1 sort))
-                  (into {}))
       coords (->> char-map
                   (map first)
                   (filter (comp not path)))]
   (->> coords
        (filter (fn [[row col]]
-                 (or (->> row
-                          by-row
-                          (partition 2)
-                          (some #(< (first %) col (second %))))
-                     (->> col
-                          by-col
-                          (partition 2)
-                          (some #(< (first %) row (second %)))))))
+                 (->> row
+                      by-row
+                      (take-while #(> col %))
+                      (map #(char-map [row %]))
+                      (filter (pipe-out-types :up))
+                      (count)
+                      odd?)))
        count))
+
