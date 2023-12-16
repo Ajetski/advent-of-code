@@ -46,6 +46,29 @@
   ([f] #(reduce f %))
   ([f init] #(reduce f init %)))
 
+(defmacro mfn
+  "like fn but memoizes return values, including recursive calls"
+  [name arglist & body]
+  `(let [dp# (atom {})
+         f# (fn ~name ~arglist
+              (or (@dp# [~@arglist])
+                  (let [res# ~@body]
+                    (swap! dp# assoc [~@arglist] res#)
+                    res#)))]
+     f#))
+
+(defmacro defmfn
+  "like defn but for a memoized fn, see ajet.core/mfn"
+  [name & args]
+  `(def ~name (mfn ~name ~@args)))
+
 (comment
   (map (static-fn Long/parseLong) ["123" "456"])
-  input-cache)
+  input-cache
+
+  (defmfn fib [x]
+    (if (< x 2)
+      x
+      (+ (fib (dec x))
+         (fib (- x 2)))))
+  (fib 200N))

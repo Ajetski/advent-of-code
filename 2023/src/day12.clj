@@ -1,50 +1,47 @@
 (ns day12
   (:require
    [clojure.string :as str]
-   [core :refer [get-puzzle-input]]))
+   [core :refer [get-puzzle-input mfn]]))
 
 (defn parse-line [line] (-> (str/split line #" ")
                             (update 1 #(->> (str/split % #",")
                                             (mapv parse-long)))))
 
 (defn ans [dots blocks]
-  (let [dp (atom {})
-        f
-        (fn f [dots blocks i bi current]
-          (or (@dp [i bi current])
-              (let [len-blocks (count blocks)
-                    dot_i (when (< i (count dots)) (get dots i))
-                    v (if (= i (count dots))
-                        (cond (and (= bi len-blocks)
-                                   (= current 0))
-                              1
-                              (and (= bi (dec len-blocks))
-                                   (= current (get blocks bi)))
-                              1
-                              :else
-                              0)
-                        (->> [\. \#]
-                             (map #(if (or (= dot_i %)
-                                           (= dot_i \?))
-                                     (cond (and (= % \.)
-                                                (= current 0))
-                                           (f dots blocks (inc i) bi 0)
+  (let
+   [len-blocks (count blocks)
+    f
+    (mfn f [i bi current]
+         (let [dot-i (when (< i (count dots)) (get dots i))]
+           (if (= i (count dots))
+             (cond (and (= bi len-blocks)
+                        (= current 0))
+                   1
+                   (and (= bi (dec len-blocks))
+                        (= current (get blocks bi)))
+                   1
+                   :else
+                   0)
+             (->> [\. \#]
+                  (map #(if (or (= dot-i %)
+                                (= dot-i \?))
+                          (cond (and (= % \.)
+                                     (= current 0))
+                                (f (inc i) bi 0)
 
-                                           (and (= % \.)
-                                                (> current 0)
-                                                (< bi len-blocks)
-                                                (= (get blocks bi) current))
-                                           (f dots blocks (inc i) (inc bi) 0)
+                                (and (= % \.)
+                                     (> current 0)
+                                     (< bi len-blocks)
+                                     (= (get blocks bi) current))
+                                (f (inc i) (inc bi) 0)
 
-                                           (= % \#)
-                                           (f dots blocks (inc i) bi (inc current))
+                                (= % \#)
+                                (f (inc i) bi (inc current))
 
-                                           :else 0)
-                                     0))
-                             (reduce +)))]
-                (swap! dp assoc [i bi current] v)
-                v)))]
-    (f dots blocks 0 0 0)))
+                                :else 0)
+                          0))
+                  (reduce +)))))]
+    (f 0 0 0)))
 
 ;; part 1
 (->> (get-puzzle-input 12)
