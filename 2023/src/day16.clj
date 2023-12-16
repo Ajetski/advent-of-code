@@ -74,5 +74,5 @@
       (for [r (range N)] {:loc [r -1], :dir :right})
       (for [r (range N)] {:loc [r N],  :dir :left})]
      (apply concat)
-     (map measure-energy)
+     (pmap measure-energy)
      (apply max))
