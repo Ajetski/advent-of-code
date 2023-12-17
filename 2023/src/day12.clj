@@ -1,7 +1,7 @@
 (ns day12
   (:require
    [clojure.string :as str]
-   [core :refer [get-puzzle-input mfn]]))
+   [core :refer [get-puzzle-input fn-m]]))
 
 (defn parse-line [line] (-> (str/split line #" ")
                             (update 1 #(->> (str/split % #",")
@@ -10,37 +10,36 @@
 (defn ans [dots blocks]
   (let
    [len-blocks (count blocks)
-    f
-    (mfn f [i bi current]
-         (let [dot-i (when (< i (count dots)) (get dots i))]
-           (if (= i (count dots))
-             (cond (and (= bi len-blocks)
-                        (= current 0))
-                   1
-                   (and (= bi (dec len-blocks))
-                        (= current (get blocks bi)))
-                   1
-                   :else
-                   0)
-             (->> [\. \#]
-                  (map #(if (or (= dot-i %)
-                                (= dot-i \?))
-                          (cond (and (= % \.)
-                                     (= current 0))
-                                (f (inc i) bi 0)
+    f (fn-m f [i bi current]
+            (let [dot-i (when (< i (count dots)) (get dots i))]
+              (if (= i (count dots))
+                (cond (and (= bi len-blocks)
+                           (= current 0))
+                      1
+                      (and (= bi (dec len-blocks))
+                           (= current (get blocks bi)))
+                      1
+                      :else
+                      0)
+                (->> [\. \#]
+                     (map #(if (or (= dot-i %)
+                                   (= dot-i \?))
+                             (cond (and (= % \.)
+                                        (= current 0))
+                                   (f (inc i) bi 0)
 
-                                (and (= % \.)
-                                     (> current 0)
-                                     (< bi len-blocks)
-                                     (= (get blocks bi) current))
-                                (f (inc i) (inc bi) 0)
+                                   (and (= % \.)
+                                        (> current 0)
+                                        (< bi len-blocks)
+                                        (= (get blocks bi) current))
+                                   (f (inc i) (inc bi) 0)
 
-                                (= % \#)
-                                (f (inc i) bi (inc current))
+                                   (= % \#)
+                                   (f (inc i) bi (inc current))
 
-                                :else 0)
-                          0))
-                  (reduce +)))))]
+                                   :else 0)
+                             0))
+                     (reduce +)))))]
     (f 0 0 0)))
 
 ;; part 1

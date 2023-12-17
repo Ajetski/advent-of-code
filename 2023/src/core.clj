@@ -30,12 +30,12 @@
 
 (defmacro comp>
   "comp, but fn-args are applied from left to right"
-  [& ls] (let [r (reverse ls)]
-           `(comp ~@r)))
+  [& ls] (let [r# (reverse ls)]
+           `(comp ~@r#)))
 
 (defmacro static-fn
   "wraps java static methods in a lambda so they can be passed as function objects"
-  [f] `#(~f %))
+  [f] `(fn [v#] (~f v#)))
 
 (defn mapvf
   "returns a function that does mapv over f when called with a coll"
@@ -46,7 +46,7 @@
   ([f] #(reduce f %))
   ([f init] #(reduce f init %)))
 
-(defmacro mfn
+(defmacro fn-m
   "like fn but memoizes return values, including recursive calls"
   [name arglist & body]
   `(let [dp# (atom {})
@@ -57,18 +57,31 @@
                     res#)))]
      f#))
 
-(defmacro defmfn
-  "like defn but for a memoized fn, see ajet.core/mfn"
+(defmacro defn-m
+  "like defn but for a memoized fn, see ajet.core/fn-m"
   [name & args]
-  `(def ~name (mfn ~name ~@args)))
+  `(def ~name (fn-m ~name ~@args)))
+
+(defmacro log [& body]
+  (let [exprs# (map (fn [e#]
+                      `(let [e-res# ~e#]
+                         (println e-res# "\t\texpr:" '~e#)
+                         e-res#)) body)]
+    `(do ~@exprs#
+         nil)))
 
 (comment
   (map (static-fn Long/parseLong) ["123" "456"])
   input-cache
 
-  (defmfn fib [x]
+  (log (+ 5 5)
+       (- 2 1))
+
+  (defn-m fib [x]
     (if (< x 2)
       x
       (+ (fib (dec x))
          (fib (- x 2)))))
-  (fib 200N))
+  (fib 20000N)
+  ;
+  )
