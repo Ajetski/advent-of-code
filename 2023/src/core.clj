@@ -71,9 +71,41 @@
     `(do ~@exprs#
          nil)))
 
+(defn apply-each
+  "[& fs vs]
+  fs is a list of funcitons of length N
+  vs is a list of values of length N
+
+  this function returns a vector where each value is the result of applying
+  an f from fs to the corresponding v from vs"
+  [& args]
+  (let [n (/ (count args) 2)]
+    (->> (zipmap (take n args)
+                 (take-last n args))
+         (mapv #((first %) (second %))))))
+
+(defn apply-each-v
+  "[& fs vs]
+  fs is a list of funcitons of length N
+  v is a vector of values of length N
+
+  this function returns a vector where each value is the result of applying
+  an f from fs to the corresponding v from vs"
+  [& args]
+  (->> (zipmap (drop-last args)
+               (last args))
+       (mapv #((first %) (second %)))))
+
+(def p partial)
+
+(def a apply)
+
 (comment
   (map (static-fn Long/parseLong) ["123" "456"])
   input-cache
+
+  (apply-each #(* % 2) #(+ % 5) 5 10)
+  (apply-each-v #(* % 2) #(+ % 5) [5 10])
 
   (log (+ 5 5)
        (- 2 1))
