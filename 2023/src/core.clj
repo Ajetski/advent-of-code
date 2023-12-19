@@ -28,10 +28,44 @@
 (defn split-spaces [s]
   (string/split s #" "))
 
+(defmacro let-dbg [arg-list & body]
+  (let [pairs (partition 2 arg-list)
+        definitions (->> pairs
+                         (map (fn [[a b]]
+                                `[~a (let [temp# ~b]
+                                       (println '~a "=" temp#)
+                                       temp#)]))
+                         (apply concat))]
+    `(let [~@definitions]
+       ~@body)))
+
 (defmacro comp>
-  "comp, but fn-args are applied from left to right"
-  [& ls] (let [r# (reverse ls)]
-           `(comp ~@r#)))
+  "comp, but fn-args are composed from left to right with currying
+  previous result inserted as first element to next function application"
+  [& ls]
+  (let [fs (map (fn [l]
+                  (if (and (list? l)
+                           (not= 'fn (first l)))
+                    (let [[f & fargs] l]
+                      `(fn [v#] (~f v# ~@fargs)))
+                    l))
+                ls)
+        r (reverse fs)]
+    `(comp ~@r)))
+
+(defmacro comp>>
+  "comp, but fn-args are composed from left to right with currying
+  previous result inserted as last element to next function application"
+  [& ls]
+  (let [fs (map (fn [l]
+                  (if (and (list? l)
+                           (not= 'fn (first l)))
+                    (let [[f & fargs] l]
+                      `(fn [v#] (~f ~@fargs v#)))
+                    l))
+                ls)
+        r (reverse fs)]
+    `(comp ~@r)))
 
 (defmacro w-fn
   "wraps s-expr such as java static methods or macro calls
@@ -97,27 +131,55 @@
                (last args))
        (mapv #((first %) (second %)))))
 
+(def p partial)
+
+(defmacro assert= [& abs]
+  `(do ~@(map (fn [[a b]]
+                `(assert (= ~a ~b)))
+              (partition 2 abs))))
+
 (comment
+
+  (let-dbg [a 1
+            b (inc a)]
+           (+ a b))
+
+  (defn abc [a b]
+    (+ a b))
+
+  (assert (= 1
+             (inc 0)
+             (dec 2)
+             (+ (/ 1 2)
+                (/ 1 2))))
+
+  (assert=
+   8 ((comp> (+ 1) (/ 2) (abc 1) (inc) ;; currying / partial fn applicaiton
+             inc ;; named fn
+             #(+ 1 %) (fn [v] (+ v 1))) ;; using lambdas
+      5)
+
+   3 ((comp> (- 5) (- 2))
+      10)
+
+   7 ((comp>> (- 5) (- 2))
+      10))
+
   (map (w-fn Long/parseLong) ["123" "456"])
   input-cache
 
   ((mapvf #(* 2 %)) [1 2])
   ((reducef + 0) [1 2])
 
-  ((comp> #(* % 3)
-          #(+ % 2)
-          #(* % 4))
-   5)
+  (let [v 20]
+    (assert= ((comp> #(* % 3) #(+ % 2) #(* % 4))
+              v)
+             ((comp  #(* % 4) #(+ % 2) #(* % 3))
+              v)))
 
-  ;; is always 1, comp> is comp but reversed (to be the proper way round lol)
-  (->> 20
-       ((juxt (comp> #(* % 3) #(+ % 2) #(* % 4))
-              (comp  #(* % 4) #(+ % 2) #(* % 3))))
-       distinct
-       count)
-
-  (apply-each #(* % 2) #(+ % 5) 5 10)
-  (apply-each-v #(* % 2) #(+ % 5) [5 10])
+  (assert=
+   (apply-each #(* % 2) #(+ % 5) 5 10)
+   (apply-each-v #(* % 2) #(+ % 5) [5 10]))
 
   (log (+ 5 5)
        (- 2 1))
