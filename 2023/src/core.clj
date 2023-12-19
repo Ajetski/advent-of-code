@@ -65,7 +65,8 @@
 (defmacro log [& body]
   (let [exprs# (map (fn [e#]
                       `(let [e-res# ~e#]
-                         (println e-res# "\t\texpr:" '~e#)
+                         (println "expr:" '~e#)
+                         (println "result: " e-res#)
                          e-res#)) body)]
     `(do ~@exprs#
          nil)))
