@@ -33,7 +33,7 @@
   [& ls] (let [r# (reverse ls)]
            `(comp ~@r#)))
 
-(defmacro static-fn
+(defmacro s-fn
   "wraps java static methods in a lambda so they can be passed as function objects"
   [f] `(fn [v#] (~f v#)))
 
@@ -90,18 +90,14 @@
   v is a vector of values of length N
 
   this function returns a vector where each value is the result of applying
-  an f from fs to the corresponding v from vs"
+  an f from fs to the corresponding value from v"
   [& args]
   (->> (zipmap (drop-last args)
                (last args))
        (mapv #((first %) (second %)))))
 
-(def p partial)
-
-(def a apply)
-
 (comment
-  (map (static-fn Long/parseLong) ["123" "456"])
+  (map (s-fn Long/parseLong) ["123" "456"])
   input-cache
 
   (apply-each #(* % 2) #(+ % 5) 5 10)
