@@ -33,8 +33,9 @@
   [& ls] (let [r# (reverse ls)]
            `(comp ~@r#)))
 
-(defmacro s-fn
-  "wraps java static methods in a lambda so they can be passed as function objects"
+(defmacro w-fn
+  "wraps s-expr such as java static methods or macro calls
+  in a lambda so they can be passed as function objects"
   [f] `(fn [v#] (~f v#)))
 
 (defn mapvf
@@ -97,7 +98,7 @@
        (mapv #((first %) (second %)))))
 
 (comment
-  (map (s-fn Long/parseLong) ["123" "456"])
+  (map (w-fn Long/parseLong) ["123" "456"])
   input-cache
 
   ((mapvf #(* 2 %)) [1 2])
@@ -126,6 +127,8 @@
       x
       (+ (fib (- x 2))
          (fib (dec x)))))
+
+  (map (w-fn log) [1 2])
 
   ;; 2000+ digit number generated in <16ms (leveraging polymorphism and big-int)
   ;; using a seemingly naive O(n!) implementation (leveraging defn-m, autocaching)
