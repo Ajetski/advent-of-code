@@ -52,15 +52,15 @@
   `(let [dp# (atom {})
          f# (fn ~name ~arglist
               (or (@dp# [~@arglist])
-                  (let [res# ~@body]
+                  (let [res# (do ~@body)]
                     (swap! dp# assoc [~@arglist] res#)
                     res#)))]
      f#))
 
 (defmacro defn-m
   "like defn but for a memoized fn, see ajet.core/fn-m"
-  [name & args]
-  `(def ~name (fn-m ~name ~@args)))
+  [name arglist & body]
+  `(def ~name (fn-m ~name ~arglist ~@body)))
 
 (defmacro log [& body]
   (let [exprs# (map (fn [e#]
@@ -115,7 +115,6 @@
        distinct
        count)
 
-
   (apply-each #(* % 2) #(+ % 5) 5 10)
   (apply-each-v #(* % 2) #(+ % 5) [5 10])
 
@@ -130,4 +129,7 @@
 
   ;; 2000+ digit number generated in <16ms (leveraging polymorphism and big-int)
   ;; using a seemingly naive O(n!) implementation (leveraging defn-m, autocaching)
-  (time (fib 10000N)))
+  (time (fib 10000N))
+
+  ;
+  )
