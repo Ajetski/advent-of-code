@@ -100,6 +100,22 @@
   (map (s-fn Long/parseLong) ["123" "456"])
   input-cache
 
+  ((mapvf #(* 2 %)) [1 2])
+  ((reducef + 0) [1 2])
+
+  ((comp> #(* % 3)
+          #(+ % 2)
+          #(* % 4))
+   5)
+
+  ;; is always 1, comp> is comp but reversed (to be the proper way round lol)
+  (->> 20
+       ((juxt (comp> #(* % 3) #(+ % 2) #(* % 4))
+              (comp  #(* % 4) #(+ % 2) #(* % 3))))
+       distinct
+       count)
+
+
   (apply-each #(* % 2) #(+ % 5) 5 10)
   (apply-each-v #(* % 2) #(+ % 5) [5 10])
 
@@ -109,8 +125,9 @@
   (defn-m fib [x]
     (if (< x 2)
       x
-      (+ (fib (dec x))
-         (fib (- x 2)))))
-  (fib 20000N)
-  ;
-  )
+      (+ (fib (- x 2))
+         (fib (dec x)))))
+
+  ;; 2000+ digit number generated in <16ms (leveraging polymorphism and big-int)
+  ;; using a seemingly naive O(n!) implementation (leveraging defn-m, autocaching)
+  (time (fib 10000N)))
