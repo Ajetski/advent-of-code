@@ -2,19 +2,20 @@
   (:require [clj-http.client :as client]
             [clojure.string :as string]))
 
-(def input-cache (atom {}))
 (def cookie (str "session=" (slurp "session")))
 
 (defn get-puzzle-input
   "retrieves and caches aoc input for 2023 given a day"
   [day]
-  (or (@input-cache day)
-      (swap! input-cache assoc day
-             (-> (str "https://adventofcode.com/2023/day/" day "/input")
-                 (client/get {:throw-entire-message? true
-                              :headers {"Cookie" cookie}})
-                 :body
-                 string/split-lines))))
+  (let [file (java.io.File. (str "inputs/day" day ".txt"))]
+    (or (when (.exists file)
+          (string/split-lines (slurp file)))
+        (let [data (-> (str "https://adventofcode.com/2023/day/" day "/input")
+                       (client/get {:throw-entire-message? true
+                                    :headers {"Cookie" cookie}})
+                       :body)]
+          (spit file data)
+          (string/split-lines data)))))
 
 (defn re-seq-pos
   "re-seq that produces a seq of {:start :end :group}"
@@ -40,32 +41,14 @@
        ~@body)))
 
 (defmacro comp>
-  "comp, but fn-args are composed from left to right with currying
-  previous result inserted as first element to next function application"
-  [& ls]
-  (let [fs (map (fn [l]
-                  (if (and (list? l)
-                           (not= 'fn (first l)))
-                    (let [[f & fargs] l]
-                      `(fn [v#] (~f v# ~@fargs)))
-                    l))
-                ls)
-        r (reverse fs)]
-    `(comp ~@r)))
+  "generates a closure that composes inputs with clojure.core/-> semantics"
+  [& forms]
+  `(fn [v#] (-> v# ~@forms)))
 
 (defmacro comp>>
-  "comp, but fn-args are composed from left to right with currying
-  previous result inserted as last element to next function application"
-  [& ls]
-  (let [fs (map (fn [l]
-                  (if (and (list? l)
-                           (not= 'fn (first l)))
-                    (let [[f & fargs] l]
-                      `(fn [v#] (~f ~@fargs v#)))
-                    l))
-                ls)
-        r (reverse fs)]
-    `(comp ~@r)))
+  "generates a closure that composes inputs with clojure.core/->> semantics"
+  [& forms]
+  `(fn [v#] (->> v# ~@forms)))
 
 (defmacro w-fn
   "wraps s-expr such as java static methods or macro calls
@@ -114,6 +97,7 @@
   this function returns a vector where each value is the result of applying
   an f from fs to the corresponding v from vs"
   [& args]
+  ;; TODO: add spec or manual validation for args
   (let [n (/ (count args) 2)]
     (->> (zipmap (take n args)
                  (take-last n args))
@@ -126,17 +110,19 @@
 
   this function returns a vector where each value is the result of applying
   an f from fs to the corresponding value from v"
+  ;; TODO: add spec or manual validation for args
   [& args]
   (->> (zipmap (drop-last args)
                (last args))
        (mapv #((first %) (second %)))))
 
-(def p partial)
+(defmacro assert-all [& assertions]
+  `(do ~@(map (fn [assertion]
+                `(assert ~assertion))
+              assertions)))
 
-(defmacro assert= [& abs]
-  `(do ~@(map (fn [[a b]]
-                `(assert (= ~a ~b)))
-              (partition 2 abs))))
+(defn partial< [f & args1]
+  (fn [& args2] (apply f (concat args2 args1))))
 
 (comment
 
@@ -152,18 +138,18 @@
              (dec 2)
              (+ (/ 1 2)
                 (/ 1 2))))
-
-  (assert=
-   8 ((comp> (+ 1) (/ 2) (abc 1) (inc) ;; currying / partial fn applicaiton
-             inc ;; named fn
-             #(+ 1 %) (fn [v] (+ v 1))) ;; using lambdas
-      5)
-
-   3 ((comp> (- 5) (- 2))
-      10)
-
-   7 ((comp>> (- 5) (- 2))
-      10))
+  (assert
+   (= ((comp> (+ 1) (/ 2) (abc 1) (inc) ;; currying / partial fn applicaiton
+              inc ;; named fn
+              #(+ 1 %) (fn [v] (+ v 1))) ;; using lambdas
+       5)
+      8))
+  (assert (= ((comp> (- 5) (- 2))
+              10)
+             3))
+  (assert (= ((comp>> (- 5) (- 2))
+              10)
+             7))
 
   (map (w-fn Long/parseLong) ["123" "456"])
   input-cache
@@ -172,14 +158,20 @@
   ((reducef + 0) [1 2])
 
   (let [v 20]
-    (assert= ((comp> #(* % 3) #(+ % 2) #(* % 4))
-              v)
-             ((comp  #(* % 4) #(+ % 2) #(* % 3))
-              v)))
+    (assert (= ((comp> #(* % 3) #(+ % 2) #(* % 4))
+                v)
+               ((comp  #(* % 4) #(+ % 2) #(* % 3))
+                v))))
 
-  (assert=
-   (apply-each #(* % 2) #(+ % 5) 5 10)
-   (apply-each-v #(* % 2) #(+ % 5) [5 10]))
+  (assert-all
+   (=
+    (apply-each #(* % 2) #(+ % 5) 1 2)
+    (apply-each-v #(* % 2) #(+ % 5) [1 2])
+    [2 7])
+   (=
+    (apply-each #(* % 2) #(+ % 5) 5 10)
+    (apply-each-v #(* % 2) #(+ % 5) [5 10])
+    [10 15]))
 
   (log (+ 5 5)
        (- 2 1))
