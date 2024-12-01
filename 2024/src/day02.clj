@@ -1,11 +1,12 @@
 (ns day02
   (:require
-   [clojure.string :as str]))
-
-(def raw-input (str/split-lines ""))
-
-(def input (->> raw-input
-                (map identity)))
+   [input-manager :refer [get-input]]
+   [core :as c]))
+(do
+  (def input
+    (->> (get-input 1)
+         (map identity)))
+  input)
 
 ;; part 1
 (->> input)
