@@ -1,11 +1,12 @@
 (ns day01
   (:require
-   [core :refer [get-input]]))
+   [input-manager :refer [get-input]]
+   [core :refer :all]))
 
 (def input (->> (get-input 1)
-                (map #(re-seq #"(\d+)\s+(\d+)" %))
-                (map (comp rest first))
-                (map (partial mapv parse-long))
+                (map (compose #(re-seq #"(\d+)\s+(\d+)" %)
+                              first rest ; only get match groups
+                              #(mapv parse-long %)))
                 (into {})
                 ((juxt keys vals))))
 
