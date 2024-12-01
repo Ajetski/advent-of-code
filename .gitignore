@@ -14,3 +14,4 @@
 ## clojure stuff
 .clj-kondo
 .lsp
+.cpcache
