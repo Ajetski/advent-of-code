@@ -1,10 +1,10 @@
 (ns day01
   (:require
    [input-manager :refer [get-input]]
-   [core :refer :all]))
+   [core :as c]))
 
 (def input (->> (get-input 1)
-                (map (compose #(re-seq #"(\d+)\s+(\d+)" %)
+                (map (c/compose #(re-seq #"(\d+)\s+(\d+)" %)
                               first rest ; only get match groups
                               #(mapv parse-long %)))
                 (into {})
