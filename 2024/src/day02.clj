@@ -20,7 +20,7 @@
 
 ;; part 1
 (->> input
-     (mapv get-diffs)
+     (map get-diffs)
      (filter small-diffs?)
      count)
 
