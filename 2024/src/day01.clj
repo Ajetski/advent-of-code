@@ -4,9 +4,8 @@
    [core :as c]))
 
 (def input (->> (get-input 1)
-                (map (c/compose #(re-seq #"(\d+)\s+(\d+)" %)
-                                first rest ; only get match groups
-                                #(mapv parse-long %)))
+                (map #(c/get-match-groups #"(\d+)\s+(\d+)" %))
+                (map #(mapv parse-long %))
                 (into {})
                 ((juxt keys vals))))
 
