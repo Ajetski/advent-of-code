@@ -21,7 +21,7 @@
 ;; part 1
 (->> input
      (mapv get-diffs)
-     (filterv small-diffs?)
+     (filter small-diffs?)
      count)
 
 ;; part 2
