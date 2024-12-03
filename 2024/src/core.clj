@@ -9,4 +9,11 @@
   (str/split s #"\s+"))
 
 (defn get-match-groups [regex s]
-  (->> s (re-seq regex) first rest))
+  (->> s (re-seq regex) (map rest)))
+
+(defn re-pos [re s]
+        (loop [m (re-matcher re s)
+               res {}]
+          (if (.find m)
+            (recur m (assoc res (.start m) (.group m)))
+            res)))
