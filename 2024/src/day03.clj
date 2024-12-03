@@ -10,7 +10,7 @@
   returns list of parsed integral multiplication results"
   [s]
   (->> s
-       (re-seq #"mul\((\d\d?\d?),(\d\d?\d?)\)")
+       (re-seq #"mul\((\d{1,3}),(\d{1,3})\)")
        (map rest)
        (map #(map parse-long %))
        (map #(reduce * %))))
@@ -22,7 +22,7 @@
 
 ;; part 2
 (->> input
-     (c/re-pos #"mul\((\d\d?\d?),(\d\d?\d?)\)|(do\(\))|(don't\(\))")
+     (c/re-pos #"mul\((\d{1,3}),(\d{1,3})\)|(do\(\))|(don't\(\))")
      (sort-by key)
      (reduce
       (fn [acc [_idx instr]]
