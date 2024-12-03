@@ -4,7 +4,7 @@
    [core :as c]))
 
 (def input (->> (get-input 1)
-                (map #(c/get-match-groups #"(\d+)\s+(\d+)" %))
+                (map #(first (c/get-match-groups #"(\d+)\s+(\d+)" %)))
                 (map #(mapv parse-long %))
                 (into {})
                 ((juxt keys vals))))
