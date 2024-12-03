@@ -9,9 +9,7 @@
   "takes in a string containing mul instructions
   returns list of parsed integral multiplication results"
   [s]
-  (->> s
-       (re-seq #"mul\((\d{1,3}),(\d{1,3})\)")
-       (map rest)
+  (->> (c/get-match-groups #"mul\((\d{1,3}),(\d{1,3})\)" s)
        (map #(map parse-long %))
        (map #(reduce * %))))
 
