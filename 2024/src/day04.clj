@@ -5,38 +5,37 @@
 
 (def input (get-input 4))
 
-(defn get-char [row col]
+(defn get-char [[row col]]
   (get (get input row) col))
 
 ;; part 1
 (->> input
      c/get-coords
      (map (fn [[row col]]
-          (->> (for [offset (range 4)]
-                         (map #(apply get-char %)
-                              [[row (+ col offset)]
-                               [row (- col offset)]
-                               [(+ row offset) col]
-                               [(- row offset) col]
-                               [(- row offset) (- col offset)]
-                               [(- row offset) (+ col offset)]
-                               [(+ row offset) (- col offset)]
-                               [(+ row offset) (+ col offset)]]))
-                       (apply map vector)
-                       (filter #(= % (seq "XMAS")))
-                       count)))
+            (->> (for [offset (range 4)]
+                   [[row (+ col offset)]
+                    [row (- col offset)]
+                    [(+ row offset) col]
+                    [(- row offset) col]
+                    [(- row offset) (- col offset)]
+                    [(- row offset) (+ col offset)]
+                    [(+ row offset) (- col offset)]
+                    [(+ row offset) (+ col offset)]])
+                 (map (partial map get-char))
+                 (apply map vector)
+                 (filter #(= % (seq "XMAS")))
+                 count)))
      (reduce +))
 
 ;; part 2
 (->> input
      c/get-coords
-     (filter #(= (apply get-char %) \A))
-     (map (fn [[row col]]
+     (filter #(= (get-char %) \A))
+     (filter (fn [[row col]]
             (->> [[[(dec row) (dec col)] [(inc row) (inc col)]]
                   [[(inc row) (dec col)] [(dec row) (inc col)]]]
-                 (map (partial map #(apply get-char %)))
+                 (map (partial map get-char))
                  (map set)
-                 (apply = #{\M \S})
-                 c/bool->binary)))
-     (reduce +))
+                 (apply = #{\M \S}))))
+     count)
 
