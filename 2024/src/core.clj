@@ -28,7 +28,8 @@
   (->> list-of-lists count range
        (map #(->> % (get list-of-lists) count range))
        (map-indexed (fn [row cols]
-                      (map #(list row %) cols)))))
+                      (map #(list row %) cols)))
+       (mapcat identity)))
 
 (defn bool->binary [condition]
   (if condition 1 0))
