@@ -9,8 +9,7 @@
   (get (get input row) col))
 
 ;; part 1
-(->> input
-     c/get-coords
+(->> (c/get-coords input)
      (map (fn [[row col]]
             (->> (for [offset (range 4)]
                    [[row (+ col offset)]
@@ -28,8 +27,7 @@
      (reduce +))
 
 ;; part 2
-(->> input
-     c/get-coords
+(->> (c/get-coords input)
      (filter #(= (get-char %) \A))
      (filter (fn [[row col]]
             (->> [[[(dec row) (dec col)] [(inc row) (inc col)]]
