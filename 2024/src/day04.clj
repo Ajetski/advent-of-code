@@ -11,9 +11,8 @@
 ;; part 1
 (->> input
      c/get-coords
-     (reduce (fn [acc [row col]]
-               (+ acc
-                  (->> (for [offset (range 4)]
+     (map (fn [[row col]]
+          (->> (for [offset (range 4)]
                          (map #(apply get-char %)
                               [[row (+ col offset)]
                                [row (- col offset)]
@@ -26,20 +25,18 @@
                        (apply map vector)
                        (filter #(= % (seq "XMAS")))
                        count)))
-             0))
+     (reduce +))
 
 ;; part 2
 (->> input
      c/get-coords
-     (reduce (fn [acc [row col]]
-               (+ acc
-                  (if (= (get-char row col) \A)
-                    (->> [[[(dec row) (dec col)] [(inc row) (inc col)]]
-                          [[(inc row) (dec col)] [(dec row) (inc col)]]]
-                         (map (partial map #(apply get-char %)))
-                         (map set)
-                         (apply = #{\M \S})
-                         c/bool->binary)
-                    0)))
-             0))
+     (filter #(= (apply get-char %) \A))
+     (map (fn [[row col]]
+            (->> [[[(dec row) (dec col)] [(inc row) (inc col)]]
+                  [[(inc row) (dec col)] [(dec row) (inc col)]]]
+                 (map (partial map #(apply get-char %)))
+                 (map set)
+                 (apply = #{\M \S})
+                 c/bool->binary)))
+     (reduce +))
 
