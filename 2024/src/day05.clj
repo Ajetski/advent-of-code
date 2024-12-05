@@ -19,20 +19,20 @@
 
 (defn ordered? [coll]
   (reduce (fn [acc el]
-            (if
-             (some acc (orderings el)) (reduced false)
-             (conj acc el)))
+            (if (some acc (orderings el))
+              (reduced false)
+              (conj acc el)))
           #{} coll))
 
 (defn order [coll]
-  (reduce (fn [acc p]
-            (if-let [idxs (->> (orderings p)
+  (reduce (fn [acc el]
+            (if-let [idxs (->> (orderings el)
                                (filter #(contains? (set acc) %))
                                (map #(.indexOf acc %))
                                (filter #(not= % -1))
                                not-empty)]
-              (c/insert-vec acc (apply min idxs) p)
-              (conj acc p)))
+              (c/insert-vec acc (apply min idxs) el)
+              (conj acc el)))
           [] coll))
 
 ;; part 1
