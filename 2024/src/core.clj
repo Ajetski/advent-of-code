@@ -22,14 +22,15 @@
   (println x)
   x)
 
-(defn get-coords
-  "returns a lazy seq representing list of list x, y tuples"
-  [list-of-lists]
-  (->> list-of-lists count range
-       (map #(->> % (get list-of-lists) count range))
-       (map-indexed (fn [row cols]
-                      (map #(list row %) cols)))
-       (mapcat identity)))
+(defn get-coords [list-of-lists]
+  (for [row (range (count list-of-lists))
+        col (range (count (get list-of-lists row)))]
+    [row col]))
+
+(defn insert-vec [v idx el]
+  (into [] (concat (take idx v)
+                   (list el)
+                   (drop idx v))))
 
 (defn bool->binary [condition]
   (if condition 1 0))

@@ -18,29 +18,22 @@
   (get v (int (/ (count v) 2))))
 
 (defn ordered? [coll]
-  (reduce (fn [acc p]
-            (if p
-              (if (some acc (orderings p))
-                (reduced false)
-                (conj acc p))
-              (reduced true)))
+  (reduce (fn [acc el]
+            (if
+             (some acc (orderings el)) (reduced false)
+             (conj acc el)))
           #{}
           coll))
 
 (defn order [coll]
   (reduce (fn [acc p]
-            (if p
-              (if-let [idxs (->> (orderings p)
-                                 (filter #(contains? (set acc) %))
-                                 (map #(.indexOf acc %))
-                                 (filter #(not= % -1))
-                                 not-empty)]
-                (let [m (apply min idxs)]
-                  (into [] (concat (take m acc)
-                                   (list p)
-                                   (drop m acc))))
-                (conj acc p))
-              (reduced acc)))
+            (if-let [idxs (->> (orderings p)
+                               (filter #(contains? (set acc) %))
+                               (map #(.indexOf acc %))
+                               (filter #(not= % -1))
+                               not-empty)]
+              (c/insert-vec acc (apply min idxs) p)
+              (conj acc p)))
           []
           coll))
 
@@ -53,8 +46,6 @@
 ;; part 2
 (->> pages
      (filter #(not (ordered? %)))
-     (map order)
-     (map get-middle)
+     (map (comp get-middle order))
      (reduce +))
-
 
