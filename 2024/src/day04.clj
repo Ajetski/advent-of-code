@@ -30,10 +30,10 @@
 (->> (c/get-coords input)
      (filter #(= (get-char %) \A))
      (filter (fn [[row col]]
-            (->> [[[(dec row) (dec col)] [(inc row) (inc col)]]
-                  [[(inc row) (dec col)] [(dec row) (inc col)]]]
-                 (map (partial map get-char))
-                 (map set)
-                 (apply = #{\M \S}))))
+               (->> [[[(dec row) (dec col)] [(inc row) (inc col)]]
+                     [[(inc row) (dec col)] [(dec row) (inc col)]]]
+                    (map (partial map get-char))
+                    (map set)
+                    (apply = #{\M \S}))))
      count)
 
