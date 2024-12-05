@@ -22,8 +22,7 @@
             (if
              (some acc (orderings el)) (reduced false)
              (conj acc el)))
-          #{}
-          coll))
+          #{} coll))
 
 (defn order [coll]
   (reduce (fn [acc p]
@@ -34,8 +33,7 @@
                                not-empty)]
               (c/insert-vec acc (apply min idxs) p)
               (conj acc p)))
-          []
-          coll))
+          [] coll))
 
 ;; part 1
 (->> pages
