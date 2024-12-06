@@ -27,10 +27,15 @@
         col (range (count (get list-of-lists row)))]
     [row col]))
 
-(defn insert-vec [v idx el]
-  (into [] (concat (take idx v)
-                   (list el)
-                   (drop idx v))))
+(defn insert-at-idx [coll idx el]
+  (concat (take idx coll)
+          (list el)
+          (drop idx coll)))
 
 (defn bool->binary [condition]
   (if condition 1 0))
+
+(defn mmap
+  "map map"
+  [f coll]
+  (map (partial map f) coll))

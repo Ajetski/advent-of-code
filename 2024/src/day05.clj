@@ -31,7 +31,7 @@
                                (map #(.indexOf acc %))
                                (filter #(not= % -1))
                                not-empty)]
-              (c/insert-vec acc (apply min idxs) el)
+              (into [] (c/insert-at-idx acc (apply min idxs) el))
               (conj acc el)))
           [] coll))
 

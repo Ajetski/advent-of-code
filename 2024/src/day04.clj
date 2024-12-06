@@ -20,7 +20,7 @@
                     [(- row offset) (+ col offset)]
                     [(+ row offset) (- col offset)]
                     [(+ row offset) (+ col offset)]])
-                 (map (partial map get-char))
+                 (c/mmap get-char)
                  (apply map vector)
                  (filter #(= % (seq "XMAS")))
                  count)))
@@ -32,7 +32,7 @@
      (filter (fn [[row col]]
                (->> [[[(dec row) (dec col)] [(inc row) (inc col)]]
                      [[(inc row) (dec col)] [(dec row) (inc col)]]]
-                    (map (partial map get-char))
+                    (c/mmap get-char)
                     (map set)
                     (apply = #{\M \S}))))
      count)
