@@ -41,9 +41,7 @@
       :else (let [pos' (move dir pos)]
               (if (= (get-char pos') \#)
                 (recur pos (turn-right dir) (conj path [dir pos]))
-                (recur pos'
-                       dir
-                       (conj path [dir pos])))))))
+                (recur pos' dir (conj path [dir pos])))))))
 
 (defn add-obstacle [[row col]]
   (update input row assoc col \#))
