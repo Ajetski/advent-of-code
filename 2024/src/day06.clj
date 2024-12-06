@@ -35,16 +35,15 @@
   (loop [pos start
          dir :up
          path #{}]
-    (if (not (in-bounds? pos))
-      path
-      (if (path [dir pos])
-        :cycle
-        (let [pos' (move dir pos)]
-          (if (= (get-char pos') \#)
-            (recur pos (turn-right dir) (conj path [dir pos]))
-            (recur pos'
-                   dir
-                   (conj path [dir pos]))))))))
+    (cond
+      (not (in-bounds? pos)) path
+      (path [dir pos]) :cycle
+      :else (let [pos' (move dir pos)]
+              (if (= (get-char pos') \#)
+                (recur pos (turn-right dir) (conj path [dir pos]))
+                (recur pos'
+                       dir
+                       (conj path [dir pos])))))))
 
 (defn add-obstacle [[row col]]
   (update input row assoc col \#))
@@ -57,9 +56,9 @@
 
 ;; part 2
 (->> (for [pos (->> (get-path)
-                  (map second)
-                  distinct
-                  (filter #(not= % start)))]
+                    (map second)
+                    distinct
+                    (filter #(not= % start)))]
        (with-redefs [input (add-obstacle pos)] (get-path)))
      (filter #(= % :cycle))
      count)
