@@ -36,6 +36,21 @@
   (if condition 1 0))
 
 (defn mmap
-  "map map"
+  "map map f coll"
   [f coll]
   (map (partial map f) coll))
+
+(defn mmapv
+  "mapv mapv f coll"
+  [f coll]
+  (mapv (partial mapv f) coll))
+
+(defn mmmap
+  "map map map f coll"
+  [f coll]
+  (map (partial map (partial map f)) coll))
+
+(defn mmmapv
+  "mapv mapv mapv f coll"
+  [f coll]
+  (mapv (partial mapv (partial mapv f)) coll))
