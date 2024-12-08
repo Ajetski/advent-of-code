@@ -19,7 +19,9 @@
 
 ;; part 1
 (->> input
-     (filter #(valid-row? (first %) 0 (second %)))
+     (pmap #(when (valid-row? (first %) 0 (second %))
+              %))
+     (filter identity)
      (map first)
      (reduce +))
 
@@ -34,7 +36,9 @@
 
 ;; part 2
 (->> input
-     (filter #(apply valid-row-2? %))
+     (pmap #(when (apply valid-row-2? %)
+              %))
+     (filter identity)
      (map first)
      (reduce +))
 
