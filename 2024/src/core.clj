@@ -54,3 +54,11 @@
   "mapv mapv mapv f coll"
   [f coll]
   (mapv (partial mapv (partial mapv f)) coll))
+
+(defn partition-by-counts [counts coll]
+  (->> counts
+       (reduce (fn [[acc coll] c]
+                 (let [[a b] (split-at c coll)]
+                   [(conj acc a) b]))
+               [[] coll])
+       first))
