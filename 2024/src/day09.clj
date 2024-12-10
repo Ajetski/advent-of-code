@@ -1,7 +1,6 @@
 (ns day09
-  (:require
-   [core :as c]
-   [input-manager :refer [get-input]]))
+  (:require [core :as c]
+            [input-manager :refer [get-input]]))
 
 (def input (->> (first (get-input 9))
                 (map str)
