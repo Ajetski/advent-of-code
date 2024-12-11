@@ -27,6 +27,12 @@
         col (range (count (get list-of-lists row)))]
     [row col]))
 
+(defn map-by-coords [arr-2d]
+  (->> arr-2d
+       get-coords
+       (map (juxt identity #(get (get arr-2d (first %)) (second %))))
+       (into {})))
+
 (defn insert-at-idx [coll idx el]
   (concat (take idx coll)
           (list el)
