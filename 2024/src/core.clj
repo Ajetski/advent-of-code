@@ -2,11 +2,14 @@
   (:require
    [clojure.string :as str]))
 
-(defn compose [& fs]
-  (apply comp (reverse fs)))
+
+;; string/regex stuff
 
 (defn split-whitespace [s]
   (str/split s #"\s+"))
+
+(defn split-on-double-newlines [s]
+  (str/split s #"\n\n"))
 
 (defn get-match-groups [regex s]
   (->> s (re-seq regex) (map rest)))
@@ -18,9 +21,22 @@
       (recur m (assoc res (.start m) (.group m)))
       res)))
 
+;; general utils
+
 (defn dbg [x]
   (println x)
   x)
+
+(defn log [msg]
+  (spit "logs.txt" msg :append true))
+
+(defn compose [& fs]
+  (apply comp (reverse fs)))
+
+(defn bool->binary [condition]
+  (if condition 1 0))
+
+;; alter collections
 
 (defn get-coords [list-of-lists]
   (for [row (range (count list-of-lists))
@@ -37,9 +53,6 @@
   (concat (take idx coll)
           (list el)
           (drop idx coll)))
-
-(defn bool->binary [condition]
-  (if condition 1 0))
 
 (defn mmap
   "map map f coll"
@@ -86,3 +99,19 @@
                  :last (first sorted-nums)}
                 (rest sorted-nums))))
 
+
+;; Math things
+
+(defn square [n] (* n n))
+(defn mean [a] (/ (reduce + a) (count a)))
+(defn standard-deviation
+  [a]
+  (let [mn (mean a)]
+    (Math/sqrt
+      (/ (reduce #(+ %1 (square (- %2 mn))) 0 a)
+        (dec (count a))))))
+
+(def arrow-char->dir {\> :right
+                \v :down
+                \< :left
+                \^ :up})
