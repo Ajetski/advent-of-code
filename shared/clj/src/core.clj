@@ -142,6 +142,12 @@
 
 ;; conversions
 
+(defn binary->long [binary-str]
+  (Long/parseLong binary-str 2))
+
+(defn long->binary [value]
+  (Long/toString value 2))
+
 (def arrow-char->dir {\> :right
                       \v :down
                       \< :left
