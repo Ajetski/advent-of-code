@@ -23,7 +23,6 @@
       (recur m (assoc res (.start m) (.group m)))
       res)))
 
-
 ;; general utils
 
 (defn dbg
@@ -33,10 +32,14 @@
   (->> x
        some-fn
        dbg
+       (dbg \"optional tag/prefix:\")
        some-fn-2)"
-  [x]
-  (println x)
-  x)
+  ([x]
+   (println x)
+   x)
+  ([prefix x]
+   (println prefix x)
+   x))
 
 (defn log
   "faster than dbg, for those really tricky graph problems
@@ -58,7 +61,6 @@
   ([f1 f2 f3 f4 & fs]
    (comp (apply comp (reverse fs)) f4 f3 f2 f1)))
 
-
 ;; alter collections
 
 (defn get-coords [list-of-lists]
@@ -72,10 +74,37 @@
        (map (juxt identity #(get (get arr-2d (first %)) (second %))))
        (into {})))
 
+(defn map-to-coords [arr-2d]
+  (->> arr-2d
+       get-coords
+       (map (juxt #(get (get arr-2d (first %)) (second %)) identity))
+       (into {})))
+
 (defn insert-at-idx [coll idx el]
   (concat (take idx coll)
           (list el)
           (drop idx coll)))
+
+(defn n-map
+  "(map map map... f coll) with n maps times"
+  [n f & colls]
+  (loop [n n
+         mapping-f f]
+    (cond
+      (<= n 0) (apply mapping-f colls)
+      (= 1 n) (apply map mapping-f colls)
+      :else (recur (dec n)
+                   (partial map mapping-f)))))
+
+(defn n-mapv
+  "(mapv mapv mapv... f coll) with n maps times"
+  [n f & colls]
+  (loop [n n
+         mapping-f f]
+    (if (= 1 n)
+      (apply mapv mapping-f colls)
+      (recur (dec n)
+             (partial mapv mapping-f)))))
 
 (defn mmap
   "map map f coll"
@@ -86,16 +115,6 @@
   "mapv mapv f coll"
   [f & colls]
   (apply mapv (partial mapv f) colls))
-
-(defn mmmap
-  "map map map f coll"
-  [f & colls]
-  (apply map (partial map (partial map f)) colls))
-
-(defn mmmapv
-  "mapv mapv mapv f coll"
-  [f & colls]
-  (apply mapv (partial mapv (partial mapv f)) colls))
 
 (defn partition-by-counts [counts coll]
   (->> counts
@@ -122,7 +141,6 @@
                  :last (first sorted-nums)}
                 (rest sorted-nums))))
 
-
 ;; Math things
 
 (defn square [n] (* n n))
@@ -138,7 +156,6 @@
              (for [el1 a
                    el2 b]
                (* el1 el2))))
-
 
 ;; conversions
 
@@ -157,7 +174,6 @@
   "converts bool to integral binary representation (0 or 1)"
   [condition]
   (if condition 1 0))
-
 
 ;; 👻 macros 👻
 
