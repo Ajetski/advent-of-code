@@ -4,7 +4,8 @@
    [core :as c]
    [input-manager :refer [get-input]]))
 
-(def input (c/map-by-coords (get-input 12)))
+(def input (c/map-by-coords
+            (get-input 2024 12)))
 
 (def cardinal-offsets [[0 1] [0 -1] [1 0] [-1 0]])
 (defn steps [loc]
@@ -36,15 +37,56 @@
        (map #(count (second %)))
        (reduce +)))
 
-(defn get-ans [get-perimeter-value]
+(defn get-ans [f]
   (loop [acc 0
-         [loc & to-see] (set (keys input))]
+         [loc & to-see]
+         (set (keys input))
+         ; #{[0 0]}
+         ]
     (if (nil? loc)
       acc
-      (let [shape (get-shape loc)]
+      (let [shape (get-shape loc)
+            value (f shape)]
         (recur (+ acc (* (count shape)
-                         (get-perimeter-value shape)))
+                         value))
                (s/difference (set to-see) (set shape)))))))
 
 ;; part 1
 (get-ans get-perimeter-count)
+
+(defn corner-triples [[row col]]
+  (let [[top top-right right bottom-right bottom bottom-left left top-left]
+        [[(dec row) col]
+         [(dec row) (inc col)]
+         [row (inc col)]
+         [(inc row) (inc col)]
+         [(inc row) col]
+         [(inc row) (dec col)]
+         [row (dec col)]
+         [(dec row) (dec col)]]]
+    [[left top-left top]
+     [top top-right right]
+     [right bottom-right bottom]
+     [bottom bottom-left left]]))
+
+(defn corner-count [pos shape]
+  (->> pos
+       corner-triples
+       (c/mmap #(contains? shape %))
+       (filter #{[true false true] ;;inner
+                 [false true false] ;;outer
+                 [false false false]}) ;;outer
+       count))
+
+(defn inner-corner? [pos shape]
+  (seq (->> pos
+            corner-triples
+            (c/mmap #(contains? shape %))
+            )))
+
+(defn get-num-corners [shape]
+  (reduce + (map #(corner-count % shape)
+                 shape)))
+
+;; part 2
+(get-ans get-num-corners)
