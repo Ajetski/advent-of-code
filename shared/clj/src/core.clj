@@ -141,6 +141,30 @@
                  :last (first sorted-nums)}
                 (rest sorted-nums))))
 
+
+(defn chunks [n coll]
+  (loop [colls []
+         left coll
+         i n]
+    (if (<= i 0)
+      (apply map list colls)
+      (recur (conj colls (take-nth n left))
+             (rest left)
+             (dec i)))))
+
+(defn windows [n coll]
+  (let [v (vec coll)]
+    (->> coll
+         (take (- (count v) (dec n)))
+         (map-indexed (fn [i _]
+                        (range i (+ i n))))
+         (mmap v))))
+
+(comment
+  (def data (map str (map (partial + 2) (range 12))))
+  (chunks 3 data)
+  (windows 8 data))
+
 ;; Math things
 
 (defn square [n] (* n n))
