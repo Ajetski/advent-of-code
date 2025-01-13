@@ -25,10 +25,9 @@
         (let [new-locs (->> (steps loc)
                             (filter #(= (input %) c))
                             (filter #(not (seen %))))]
-          (recur
-           (into acc new-locs)
-           (conj seen loc)
-           (into locs new-locs)))))))
+          (recur (into acc new-locs)
+                 (conj seen loc)
+                 (into locs new-locs)))))))
 
 (defn get-perimeter-count [shape]
   (->> shape
@@ -40,15 +39,12 @@
 (defn get-ans [f]
   (loop [acc 0
          [loc & to-see]
-         (set (keys input))
-         ; #{[0 0]}
-         ]
+         (set (keys input))]
     (if (nil? loc)
       acc
       (let [shape (get-shape loc)
             value (f shape)]
-        (recur (+ acc (* (count shape)
-                         value))
+        (recur (+ acc (* (count shape) value))
                (s/difference (set to-see) (set shape)))))))
 
 ;; part 1
@@ -77,12 +73,6 @@
                  [false true false] ;;outer
                  [false false false]}) ;;outer
        count))
-
-(defn inner-corner? [pos shape]
-  (seq (->> pos
-            corner-triples
-            (c/mmap #(contains? shape %))
-            )))
 
 (defn get-num-corners [shape]
   (reduce + (map #(corner-count % shape)
