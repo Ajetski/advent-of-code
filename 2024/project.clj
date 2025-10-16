@@ -3,6 +3,7 @@
   :url "http://github.com/ajetski/advent-of-code"
   :min-lein-version "2.0.0"
   :jvm-opts ["-Xmx16g"]
+  :plugins [[cider/cider-nrepl "0.57.0"]]
   :dependencies [[org.clojure/clojure "1.12.0"]
                  [org.clojure/math.combinatorics "0.3.0"]
                  [babashka/fs "0.5.23"]
