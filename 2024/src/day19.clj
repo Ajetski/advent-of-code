@@ -22,8 +22,7 @@
                (mapv (constantly 0) puzzle))
        last))
 
-(let [[w _ & p]
-      (input-manager/get-input 2024 19)]
+(let [[w _ & p] (input-manager/get-input 2024 19)]
   (def words (into #{} (str/split w #", ")))
   (def puzzles p))
 
