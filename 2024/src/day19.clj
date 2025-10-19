@@ -44,5 +44,5 @@
   (valid-combination-count #{"word"} "word")    ; 1
 
   (increment-counts-for-matching-words #{"wo" "or" "w" "rd" "d"} "word" [0 0 0 0] 0) ; [1 1 0 0]
-  (valid-combination-count #{"wo" "or" "w" "rd" "d"} "word") ; 2, because ("wo" "r" "d") and ("w")
+  (valid-combination-count #{"wo" "or" "w" "rd" "d"} "word") ; 2, because ("wo" "r" "d") and ("w" "or" "d")
   )
