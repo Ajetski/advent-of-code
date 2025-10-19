@@ -79,7 +79,36 @@ bbrgwb")
                   next-subsets
                   (inc n))))))))
 
+;; part 1 solution
 (->> puzzles
      (map is-valid)
      (filter identity)
      count)
+
+(defn valid-combination-count
+  ([puzzle]
+   (valid-combination-count puzzle
+                            0
+                            1
+                            (mapv (constantly 0) puzzle)))
+  ;; dp is vec of ints which contains the count of combinations for substring from puzzle[0] and ending at puzzle[n]
+  ([puzzle pos weight dp]
+   (if (>= pos (count puzzle))
+     (last dp)
+     (let [dp' (->> (map (partial + pos) word-sizes)
+                    (filter (partial >= (count puzzle)))
+                    (map (partial subs puzzle pos))
+                    (filter words)
+                    (map (comp dec count))
+                    (map (partial + pos))
+                    (reduce (fn [acc idx] (update acc idx (partial + weight)))
+                            dp))]
+       (recur puzzle
+              (inc pos)
+              (or (get dp' pos) 0)
+              dp')))))
+
+;; part 2 solution
+(->> puzzles
+     (map valid-combination-count)
+     (apply +))
