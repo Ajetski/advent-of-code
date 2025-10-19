@@ -22,11 +22,10 @@
    (if (>= pos (count puzzle))
      (last dp)
      (let [dp' (->> (map (partial + pos) word-sizes)
-                    (filter (partial >= (count puzzle)))
+                    (filter (partial >= (count puzzle))) ;; prevent NPE on substring overflow
                     (map (partial subs puzzle pos))
                     (filter words)
-                    (map (comp dec count))
-                    (map (partial + pos))
+                    (map (comp (partial + pos) dec count))
                     (reduce (fn [acc idx] (update acc idx (partial + weight)))
                             dp))]
        (recur puzzle (inc pos) (get dp' pos) dp')))))
