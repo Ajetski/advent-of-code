@@ -35,8 +35,8 @@
 (apply + (map (partial valid-combination-count words) puzzles))
 
 (comment
-  (increment-counts-for-matching-words #{"a"} "atest" [0 0 0 0 0 0] 0)  ; [1 0 0 0 0 0]
-  (increment-counts-for-matching-words #{"a"} "btest" [0 0 0 0 0 0] 0)  ; [0 0 0 0 0 0]
+  (increment-counts-for-matching-words #{"a"} "atest"  [0 0 0 0 0 0] 0) ; [1 0 0 0 0 0]
+  (increment-counts-for-matching-words #{"a"} "btest"  [0 0 0 0 0 0] 0) ; [0 0 0 0 0 0]
   (increment-counts-for-matching-words #{"te"} "atest" [1 0 0 0 0 0] 1) ; [1 0 1 0 0 0]
 
   (increment-counts-for-matching-words #{"wo" "rd"} "word" [0 1 0 0] 2) ; [0 1 0 1]
