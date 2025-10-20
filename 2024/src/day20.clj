@@ -35,7 +35,7 @@
                (into visited searches)
                (into shortest searches-w-path-lengths))))))
 
-(defn find-best-cheat []
+(defn find-cheats []
   (let [search-path (find-search-path)
         walls (->> grid
                    (filter (comp #{\#} second))
@@ -53,7 +53,8 @@
                               (map #(- % a) bs))))]
     (frequencies cheats)))
 
-(->> (find-best-cheat)
+;; part 1
+(->> (find-cheats)
      (filter (comp #(> % 100) first))
      (map second)
      (apply +))
