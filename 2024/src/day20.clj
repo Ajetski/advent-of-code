@@ -1,24 +1,8 @@
 (ns day20
   (:require
-   [core :as c]
    input-manager))
 
-(def maze (input-manager/get-input 2024 20)
-  #_(c/split-whitespace "###############
-#...#...#.....#
-#.#.#.#.#.###.#
-#S#...#.#.#...#
-#######.#.#.###
-#######.#.#...#
-#######.#.###.#
-###..E#...#...#
-###.#######.###
-#...###...#...#
-#.#####.#.###.#
-#.#...#.#.#...#
-#.#.#.#.#.#.###
-#...#...#...###
-###############"))
+(def maze (input-manager/get-input 2024 20))
 (def grid (->> maze
                (map-indexed (fn [row-idx row]
                               (map-indexed (fn [col-idx c]
@@ -26,12 +10,12 @@
                                            row)))
                (mapcat identity)
                (into {})))
-(def start (->> grid
-                (filter (comp #{\S} second))
-                ffirst))
-(def end (->> grid
-              (filter (comp #{\E} second))
-              ffirst))
+(defn find-char [c]
+  (->> grid
+       (filter (comp #{c} second))
+       ffirst))
+(def start (find-char \S))
+(def end (find-char \E))
 
 (def direction-offsets #{[0 1] [1 0] [0 -1] [-1 0]})
 
@@ -39,10 +23,8 @@
   (loop [[[pos steps] & rst] [[start 0]]
          visited #{start}
          shortest {start 0}]
-    (cond
-      (= pos end) shortest
-
-      :else
+    (if (= pos end)
+      shortest
       (let [searches (->> direction-offsets
                           (map (partial mapv + pos))
                           (filter grid)
@@ -55,7 +37,6 @@
 
 (defn find-best-cheat []
   (let [search-path (find-search-path)
-        ; no-cheat-solution (search-path end)
         walls (->> grid
                    (filter (comp #{\#} second))
                    (map first))
