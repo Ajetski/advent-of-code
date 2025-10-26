@@ -5,6 +5,7 @@
   :jvm-opts ["-Xmx16g"]
   :plugins [[cider/cider-nrepl "0.57.0"]]
   :dependencies [[org.clojure/clojure "1.12.0"]
+                 [org.clojure/data.priority-map "1.2.0"]
                  [org.clojure/math.combinatorics "0.3.0"]
                  [babashka/fs "0.5.23"]
                  [org.babashka/http-client "0.4.22"]]
