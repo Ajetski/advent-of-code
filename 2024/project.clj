@@ -8,5 +8,6 @@
                  [org.clojure/data.priority-map "1.2.0"]
                  [org.clojure/math.combinatorics "0.3.0"]
                  [babashka/fs "0.5.23"]
-                 [org.babashka/http-client "0.4.22"]]
+                 [org.babashka/http-client "0.4.22"]
+                 [org.clojure/core.match "1.1.0"]]
   :source-paths ["src" "../shared/clj/src"])
