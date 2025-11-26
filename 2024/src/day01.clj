@@ -1,26 +1,24 @@
 (ns day01
-  (:require
-   [input-manager :refer [get-input]]
-   [core :as c]))
-
-(def input (->> (get-input 1)
-                (map #(first (c/get-match-groups #"(\d+)\s+(\d+)" %)))
-                (map #(mapv parse-long %))
-                (into {})
-                ((juxt keys vals))))
+  (:require input-manager))
 
 ;; part 1
+(defn every-other [coll]
+  (take-nth 2 coll))
+
+(def input (->> (input-manager/get-input-raw 2024 1)
+                (re-seq #"\d+")
+                (map parse-long)
+                ((juxt every-other (comp every-other rest)))))
+
 (->> input
      (map sort)
-     (apply zipmap)
-     (map #(abs (apply - %)))
-     (reduce +))
+     (apply map (comp abs -))
+     (apply +))
 
 ;; part 2
-(let [[a b] input
-      freqs (frequencies b)]
-  (->> a
+(let [[left-col right-col] input
+      freqs (frequencies right-col)]
+  (->> left-col
        (map #(* (or (freqs %) 0) %))
        (reduce +)))
-
 
