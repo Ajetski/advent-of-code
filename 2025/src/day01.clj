@@ -1,6 +1,5 @@
 (ns day01
-  (:require input-manager
-            #_[clojure.string :as str]))
+  (:require input-manager))
 
 (defn parse-line [line]
   [(.charAt line 0)
