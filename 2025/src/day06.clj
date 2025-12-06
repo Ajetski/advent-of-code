@@ -3,33 +3,28 @@
 
 (def input (input-manager/get-input 2025 6))
 
-(def num-line? (comp not #{\* \+} first))
-(def nums-raw (take-while num-line? input))
-(def nums (map (comp (partial map parse-long) #(re-seq #"\d+" %)) nums-raw))
-(def ops (->> input
-              (drop-while num-line?)
-              (first)
+(def numeric-line? (comp not #{\* \+} first))
+(def numeric-lines (take-while numeric-line? input))
+(def nums (map #(map parse-long (re-seq #"\d+" %)) numeric-lines))
+(def ops (->> (drop-while numeric-line? input)
+              first
               (filter (partial not= \space))
               (mapv {\+ +, \* *})))
 
 ;; part 1
-(->> nums
-     (apply map (fn [op & rst]
-                  (apply op rst))
-            ops)
-     (apply +))
+(apply + (apply map (fn [op & rst] (apply op rst))
+                ops
+                nums))
 
 ;; part 2
-(->> (range (count (first nums-raw)))
+(->> (range (count (first numeric-lines)))
      (reduce (fn [{:keys [op-idx curr-nums] :as acc} col-idx]
-               (let [op (get ops op-idx)
-                     col (->> nums-raw
-                              (map #(.charAt % col-idx))
+               (let [op (ops op-idx)
+                     col (->> (map #(.charAt % col-idx) numeric-lines)
                               (filter (partial not= \space))
                               (map #(- (int %) (int \0))))]
                  (if (empty? col)
-                   (-> acc
-                       (update :ans + (apply op curr-nums))
+                   (-> (update acc :ans + (apply op curr-nums))
                        (update :op-idx inc)
                        (assoc :curr-nums []))
                    (update acc :curr-nums conj (parse-long (apply str col))))))
