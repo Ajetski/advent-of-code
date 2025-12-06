@@ -6,14 +6,15 @@
 
 (def num-line? (comp not #{\* \+} first))
 (def nums-raw (take-while num-line? input))
-(def nums (->> nums-raw
-               (map #(map parse-long (re-seq #"\d+" %)))))
+(def nums (map (comp (partial map parse-long)
+                     #(re-seq #"\d+" %))
+               nums-raw))
 (def op-map {\+ +, \* *})
-(def ops (as-> input v
-           (drop-while num-line? v)
-           (first v)
-           (filter (partial not= \space) v)
-           (mapv op-map v)))
+(def ops (->> input
+              (drop-while num-line?)
+              (first)
+              (filter (partial not= \space))
+              (mapv op-map)))
 
 ;; part 1
 (->> nums
