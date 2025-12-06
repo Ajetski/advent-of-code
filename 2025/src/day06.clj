@@ -1,8 +1,7 @@
 (ns day06
   (:require input-manager))
 
-(def input
-  (input-manager/get-input 2025 6))
+(def input (input-manager/get-input 2025 6))
 
 (def num-line? (comp not #{\* \+} first))
 (def nums-raw (take-while num-line? input))
