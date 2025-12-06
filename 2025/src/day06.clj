@@ -5,9 +5,7 @@
 
 (def num-line? (comp not #{\* \+} first))
 (def nums-raw (take-while num-line? input))
-(def nums (map (comp (partial map parse-long)
-                     #(re-seq #"\d+" %))
-               nums-raw))
+(def nums (map (comp (partial map parse-long) #(re-seq #"\d+" %)) nums-raw))
 (def ops (->> input
               (drop-while num-line?)
               (first)
@@ -22,22 +20,21 @@
      (apply +))
 
 ;; part 2
-(def MAX_LINE_IDX (dec (count (first nums-raw))))
-(loop [col-idx 0
-       op-idx 0
-       curr-nums []
-       acc 0]
-  (let [op (get ops op-idx)
-        ans (+ acc (apply op curr-nums))]
-    (if (> col-idx MAX_LINE_IDX)
-      ans
-      (let [col (->> nums-raw
-                     (map #(.charAt % col-idx))
-                     (filter (partial not= \space))
-                     (map #(- (int %) (int \0))))]
-        (if (empty? col)
-          (recur (inc col-idx) (inc op-idx) [] ans)
-          (recur (inc col-idx)
-                 op-idx
-                 (conj curr-nums (parse-long (apply str col)))
-                 acc))))))
+(->> (range (count (first nums-raw)))
+     (reduce (fn [{:keys [op-idx curr-nums] :as acc} col-idx]
+               (let [op (get ops op-idx)
+                     col (->> nums-raw
+                              (map #(.charAt % col-idx))
+                              (filter (partial not= \space))
+                              (map #(- (int %) (int \0))))]
+                 (if (empty? col)
+                   (-> acc
+                       (update :ans + (apply op curr-nums))
+                       (update :op-idx inc)
+                       (assoc :curr-nums []))
+                   (update acc :curr-nums conj (parse-long (apply str col))))))
+             {:ans 0, :op-idx 0, :curr-nums []})
+     ((juxt :ans
+            #(apply (last ops) (:curr-nums %))))
+     (apply +))
+
