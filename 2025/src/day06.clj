@@ -8,12 +8,11 @@
 (def nums (map (comp (partial map parse-long)
                      #(re-seq #"\d+" %))
                nums-raw))
-(def op-map {\+ +, \* *})
 (def ops (->> input
               (drop-while num-line?)
               (first)
               (filter (partial not= \space))
-              (mapv op-map)))
+              (mapv {\+ +, \* *})))
 
 ;; part 1
 (->> nums
