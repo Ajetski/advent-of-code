@@ -4,17 +4,16 @@
 (def input
   (input-manager/get-input 2025 6))
 
-(def row-count 4)
-(def nums-raw (take row-count input))
+(def num-line? (comp not #{\* \+} first))
+(def nums-raw (take-while num-line? input))
 (def nums (->> nums-raw
                (map #(map parse-long (re-seq #"\d+" %)))))
 (def op-map {\+ +, \* *})
 (def ops (as-> input v
-           (drop row-count v)
+           (drop-while num-line? v)
            (first v)
            (filter (partial not= \space) v)
            (mapv op-map v)))
-(def LEN (count (first nums-raw)))
 
 ;; part 1
 (->> nums
@@ -24,11 +23,12 @@
      (apply +))
 
 ;; part 2
+(def MAX_LINE_IDX (dec (count (first nums-raw))))
 (loop [col-idx 0
        op-idx 0
        curr-nums []
        acc 0]
-  (if (>= col-idx LEN)
+  (if (> col-idx MAX_LINE_IDX)
     (+ acc (apply (get ops op-idx) curr-nums))
     (let [col (->> nums-raw
                    (map #(.charAt % col-idx))
