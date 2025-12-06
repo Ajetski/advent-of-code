@@ -28,19 +28,17 @@
        op-idx 0
        curr-nums []
        acc 0]
-  (if (> col-idx MAX_LINE_IDX)
-    (+ acc (apply (get ops op-idx) curr-nums))
-    (let [col (->> nums-raw
-                   (map #(.charAt % col-idx))
-                   (filter (partial not= \space))
-                   (map #(- (int %) (int \0))))
-          op (get ops op-idx)]
-      (if (empty? col)
-        (recur (inc col-idx)
-               (inc op-idx)
-               []
-               (+ acc (apply op curr-nums)))
-        (recur (inc col-idx)
-               op-idx
-               (conj curr-nums (parse-long (apply str col)))
-               acc)))))
+  (let [op (get ops op-idx)
+        ans (+ acc (apply op curr-nums))]
+    (if (> col-idx MAX_LINE_IDX)
+      ans
+      (let [col (->> nums-raw
+                     (map #(.charAt % col-idx))
+                     (filter (partial not= \space))
+                     (map #(- (int %) (int \0))))]
+        (if (empty? col)
+          (recur (inc col-idx) (inc op-idx) [] ans)
+          (recur (inc col-idx)
+                 op-idx
+                 (conj curr-nums (parse-long (apply str col)))
+                 acc))))))
